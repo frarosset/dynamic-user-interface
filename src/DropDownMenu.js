@@ -1,3 +1,5 @@
+import './DropDownMenu.css';
+
 export default class DropDownMenu{
     constructor(parentDiv){
         let dropDownDiv = document.createElement('div');
