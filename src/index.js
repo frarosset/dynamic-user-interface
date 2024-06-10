@@ -1,11 +1,12 @@
 import DropDownMenu from './DropDownMenu.js';
 
 let menuData = [
-    {"label": "Anchor 1", "link":"#"},
-    {"label": "Anchor 2", "link":"#"},
-    {"label": null},
-    {"label": "Simple Label", "link":null},
-    {"label": "", "link":"#"},
+    {label: "Anchor 1", link:"#"},
+    {label: "Anchor 2", link:"#"},
+    {label: null},
+    {label: "Simple Label"},
+    {label: "Action 1", action: () => {alert('Action 1!');}},
+    {label: "", link:"#"},
 ];
 
 function init(){

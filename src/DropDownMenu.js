@@ -62,6 +62,14 @@ export default class DropDownMenu{
 
             item.classList.add('anchor');
             item.appendChild(anchor);
+        } else if (data.action){
+            // action
+            const action = document.createElement('button');
+            action.addEventListener('click', data.action);
+            action.textContent = data.label;
+
+            item.classList.add('action');
+            item.appendChild(action);
         } else {
             item.classList.add('label');
             item.textContent = data.label;
