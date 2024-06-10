@@ -1,4 +1,9 @@
 import './DropDownMenu.css';
+// Font Awesome 5 (Free)
+import '@fortawesome/fontawesome-free/js/fontawesome'
+import '@fortawesome/fontawesome-free/js/solid' // https://fontawesome.com/icons?d=gallery&s=solid&m=free
+import '@fortawesome/fontawesome-free/js/regular' // https://fontawesome.com/icons?d=gallery&s=regular&m=free
+import '@fortawesome/fontawesome-free/js/brands' // https://fontawesome.com/icons?d=gallery&s=brands&m=free
 
 export default class DropDownMenu{
     #dropDownDiv;
@@ -6,13 +11,13 @@ export default class DropDownMenu{
     #content;
     #items = [];
 
-    constructor(parentDiv, menuData, enableHover=false){
+    constructor(parentDiv, menuData, enableHover=false, btnIcon='fa-solid fa-bars', btnLabel=''){
         this.#dropDownDiv = document.createElement('div');
         this.#dropDownDiv.classList.add('drop-down-menu');
 
         this.#button = document.createElement('button');
         this.#button.classList.add('drop-down-button');
-        this.#button.textContent = '=';
+        this.#setIconAndLabel(this.#button,btnIcon,btnLabel)
 
         this.#content = document.createElement('ul');
         this.#content.classList.add('drop-down-content');
@@ -77,6 +82,17 @@ export default class DropDownMenu{
 
         this.#items.push(item);
         this.#content.appendChild(item);
+    }
+
+    #setIconAndLabel(element,icon,label){
+        if (icon){
+            element.innerHTML = `${this.#getIconHTML(icon)}${label}`;
+        } else {
+            element.textContent = label;
+        }
+    }
+    #getIconHTML(icon){
+        return `<i class="${icon}" aria-hidden="true"></i>`;
     }
 
     #toggleVisibility(element,condition=undefined){
