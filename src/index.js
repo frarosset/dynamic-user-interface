@@ -8,7 +8,7 @@ const menuData = [
     {label: null},
     {label: "Simple Label 1"},
     {label: "Simple Label 2", icon: "fa-regular fa-moon"},
-    {label: "Simple Label 3", icon: "fa-regular fa-sun"},
+    {label: "", icon: "fa-regular fa-sun"},
     {label: null},
     {label: "Action 1", action: () => {alert('Action 1!');}},
     {label: "Action 2", action: () => {alert('Action 2!');}, icon: "fa-regular fa-user"},

@@ -92,7 +92,7 @@ export default class DropDownMenu{
         }
     }
     #getIconHTML(icon){
-        return `<i class="${icon}" aria-hidden="true"></i>`;
+        return `<i class="${icon} fa-fw" aria-hidden="true"></i>`;
     }
 
     #toggleVisibility(element,condition=undefined){
