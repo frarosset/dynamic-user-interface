@@ -9,7 +9,6 @@ export default class DropDownMenu{
     #dropDownDiv;
     #button;
     #content;
-    #items = [];
 
     constructor(parentDiv, menuData, enableHover=false, btnIcon='fa-solid fa-bars', btnLabel=''){
         this.#dropDownDiv = document.createElement('div');
@@ -51,14 +50,16 @@ export default class DropDownMenu{
     }
 
     addItem(data){
-        const item = document.createElement('li');
         if (data.label === null){
             // separator
             const separator = document.createElement('hr');
+            separator.classList.add('separator');
+            this.#content.appendChild(separator);
+            return;
+        }
 
-            item.classList.add('separator');
-            item.appendChild(separator);
-        } else if (data.link){
+        const item = document.createElement('li');
+        if (data.link){
             // anchor
             const anchor = document.createElement('a');
             anchor.href = data.link;
@@ -80,7 +81,6 @@ export default class DropDownMenu{
             this.#setIconAndLabel(item,data.icon,data.label);
         }
 
-        this.#items.push(item);
         this.#content.appendChild(item);
     }
 
@@ -103,7 +103,4 @@ export default class DropDownMenu{
         element.classList.toggle('visible-forced',condition);
         console.log('Toggle (forced)',condition);
     }
-
-
-    
 }
