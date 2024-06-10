@@ -47,8 +47,14 @@ export default class DropDownMenu{
 
     addItem(data){
         const item = document.createElement('li');
+        if (data.label === null){
+            // separator
+            const separator = document.createElement('hr');
 
-        if (data.link){
+            item.classList.add('separator');
+            item.appendChild(separator);
+        } else if (data.link){
+            // anchor
             const anchor = document.createElement('a');
             anchor.href = data.link;
             //anchor.target = '_blank'; // Opens link in a new tab
@@ -57,6 +63,7 @@ export default class DropDownMenu{
             item.classList.add('anchor');
             item.appendChild(anchor);
         } else {
+            item.classList.add('label');
             item.textContent = data.label;
         }
 
