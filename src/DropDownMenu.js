@@ -17,7 +17,7 @@ export default class DropDownMenu{
 
         this.#button = document.createElement('button');
         this.#button.classList.add('drop-down-button');
-        this.#setIconAndLabel(this.#button,btnIcon,btnLabel)
+        this.#setIconAndLabel(this.#button,btnIcon,btnLabel);
 
         this.#content = document.createElement('ul');
         this.#content.classList.add('drop-down-content');
@@ -63,7 +63,7 @@ export default class DropDownMenu{
             const anchor = document.createElement('a');
             anchor.href = data.link;
             //anchor.target = '_blank'; // Opens link in a new tab
-            anchor.textContent = data.label;
+            this.#setIconAndLabel(anchor,data.icon,data.label);
 
             item.classList.add('anchor');
             item.appendChild(anchor);
@@ -71,13 +71,13 @@ export default class DropDownMenu{
             // action
             const action = document.createElement('button');
             action.addEventListener('click', data.action);
-            action.textContent = data.label;
+            this.#setIconAndLabel(action,data.icon,data.label);
 
             item.classList.add('action');
             item.appendChild(action);
         } else {
             item.classList.add('label');
-            item.textContent = data.label;
+            this.#setIconAndLabel(item,data.icon,data.label);
         }
 
         this.#items.push(item);
