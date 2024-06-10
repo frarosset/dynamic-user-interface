@@ -7,13 +7,13 @@ let menuData = [
 ];
 
 function init(){
-    let body = document.querySelector('body');
+    const showMenuOnHover = true;
+    const body = document.querySelector('body');
 
-    let header = document.createElement('header');
+    const header = document.createElement('header');
     body.appendChild(header);
     
-    let dropDownMenu = new DropDownMenu(header,menuData);
-
+    const dropDownMenu = new DropDownMenu(header,menuData,showMenuOnHover);
 }
 
 init();

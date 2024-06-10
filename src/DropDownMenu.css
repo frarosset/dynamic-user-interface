@@ -1,14 +1,35 @@
 .drop-down-menu{
+    --color-light: palevioletred;
+    --color-dark: purple;
+    --color-white: white;
+    --color-black: black;
 
+    --radius: 6px;
+    --border-radius: 2px;
 }
 
 .drop-down-button{
-    color: palevioletred;
+    color: var(--color-light);
     background-color: transparent;
-    border: 2px solid purple;
-    border-radius: 6px;
+    border: var(--border-radius) solid var(--color-dark);
+    border-radius: var(--radius);
 }
 
 .drop-down-content{
-    background-color: palevioletred;
+    visibility: hidden;
+    background-color: var(--color-light);
+    border-radius: var(--radius);
+}
+
+.drop-down-menu.visible .drop-down-content{
+    visibility: visible;
+}
+
+.drop-down-menu.visible-forced .drop-down-content{
+    visibility: visible !important;
+}
+
+.drop-down-menu.visible-forced .drop-down-button{
+    background-color: var(--color-dark);
+    color: var(--color-white);
 }
