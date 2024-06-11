@@ -8,6 +8,9 @@ export default class ImageCarousel{
         this.#imageCarouselDiv = document.createElement('div');
         this.#imageCarouselDiv.classList.add('image-carousel');
 
+        const frameDiv = document.createElement('div');
+        frameDiv.classList.add('image-carousel-frame');
+        
         const imagesDiv = document.createElement('div');
         imagesDiv.classList.add('image-carousel-slides');
         imagesPaths.forEach(imgPath => {
@@ -16,8 +19,12 @@ export default class ImageCarousel{
 
             this.#imgs.push(img);
             imagesDiv.appendChild(img);
-        })
-        this.#imageCarouselDiv.appendChild(imagesDiv);
+        });
+
+        frameDiv.appendChild(imagesDiv);
+        this.#imageCarouselDiv.appendChild(frameDiv);
+
+        console.log(this.#imgs);
         
         parentDiv.appendChild(this.#imageCarouselDiv);
     }
