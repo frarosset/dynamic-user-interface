@@ -1,18 +1,21 @@
 import './DropDownMenu.css';
 // Font Awesome 5 (Free)
-import '@fortawesome/fontawesome-free/js/fontawesome'
-import '@fortawesome/fontawesome-free/js/solid' // https://fontawesome.com/icons?d=gallery&s=solid&m=free
-import '@fortawesome/fontawesome-free/js/regular' // https://fontawesome.com/icons?d=gallery&s=regular&m=free
-import '@fortawesome/fontawesome-free/js/brands' // https://fontawesome.com/icons?d=gallery&s=brands&m=free
+import '@fortawesome/fontawesome-free/js/fontawesome';
+import '@fortawesome/fontawesome-free/js/solid';
+import '@fortawesome/fontawesome-free/js/regular';
+import '@fortawesome/fontawesome-free/js/brands';
 
 export default class DropDownMenu{
     #dropDownDiv;
     #button;
     #content;
 
-    constructor(parentDiv, menuData, enableHover=false, btnIcon='fa-solid fa-bars', btnLabel=''){
+    constructor(parentDiv, menuData, enableHover=false, btnIcon='fa-solid fa-bars', btnLabel='', contentPosition){
         this.#dropDownDiv = document.createElement('div');
         this.#dropDownDiv.classList.add('drop-down-menu');
+        if (contentPosition !== 'left' && contentPosition !== 'right')
+            contentPosition = 'center';
+        this.#dropDownDiv.classList.add('content-align-' + contentPosition);
 
         this.#button = document.createElement('button');
         this.#button.classList.add('drop-down-button');

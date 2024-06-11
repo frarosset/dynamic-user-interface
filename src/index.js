@@ -24,11 +24,16 @@ function init(){
     const header = document.createElement('header');
     body.appendChild(header);
     
-    const dropDownMenu = new DropDownMenu(header,menuData,showMenuOnHover,btnIcon,btnLabel);
+    const dropDownMenu = new DropDownMenu(header,menuData,showMenuOnHover,btnIcon,btnLabel,'left');
+    const dropDownMenu2 = new DropDownMenu(header,menuData,showMenuOnHover,btnIcon,btnLabel,'center');
+    const dropDownMenu3 = new DropDownMenu(header,menuData,showMenuOnHover,btnIcon,btnLabel,'right');
+    header.style.display = 'flex';
+    header.style.justifyContent = 'space-between';
 
     // add an horizonatal line, just for testing purposes
     const separator = document.createElement('hr');
-    header.appendChild(separator);
+    body.appendChild(separator);
+
 }
 
 init();
