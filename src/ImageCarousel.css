@@ -1,5 +1,10 @@
 .image-carousel{
-    --prev-next-padding: 5%;
+    --prev-next-color: white;
+    --prev-next-shadow: 0px 0px 5px black;
+    --prev-next-padding: 0%;
+    --prev-next-width: 15%;
+    --prev-next-height: 100%;
+    --prev-next-icon-size: 50px;
     position: relative;
 }
 
@@ -28,6 +33,13 @@
     position: absolute;
     top: 50%;
     transform: translatey(-50%);
+    background-color: transparent;
+    border: none;
+    color: var(--prev-next-color);
+    width: var(--prev-next-width);
+    height: var(--prev-next-height);
+    font-size: var(--prev-next-icon-size);
+    filter: drop-shadow(var(--prev-next-shadow));
 }
 .image-carousel button.previous-button{
     left: var(--prev-next-padding); /* 0% + var(--prev-next-padding);*/
