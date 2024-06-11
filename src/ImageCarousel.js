@@ -10,6 +10,8 @@ export default class ImageCarousel{
     #numOfImgs;
     #currentImg=0;
     #navigationDiv;
+    #slideTimeoutObj = null;
+    #slideTimeoutInMs;
 
     #iconsData = {
         navigationDotDataPrefix: 'fa-regular',
@@ -19,7 +21,7 @@ export default class ImageCarousel{
         nextData: 'fa-solid fa-chevron-right'
     };
 
-    constructor(parentDiv,imagesPaths){
+    constructor(parentDiv,imagesPaths,slideTimeoutInMs=5000){
         this.#imageCarouselDiv = document.createElement('div');
         this.#imageCarouselDiv.classList.add('image-carousel');
 
@@ -35,6 +37,10 @@ export default class ImageCarousel{
         this.#imageCarouselDiv.appendChild(this.#navigationDiv);
 
         parentDiv.appendChild(this.#imageCarouselDiv);
+
+        // initalize timeout to advance slides automatically
+        this.#slideTimeoutInMs = slideTimeoutInMs;
+        this.#initSlideTimeout();
     }
 
     #initFrameDivWithImages(imagesPaths){
@@ -94,17 +100,26 @@ export default class ImageCarousel{
         return navigationDiv;
     }
 
+    #initSlideTimeout(){
+        this.#slideTimeoutObj = setTimeout(() => {this.#next();}, this.#slideTimeoutInMs);
+    }
+    #cancelSlideTimeout(){
+        clearTimeout(this.#slideTimeoutObj);
+    }
+
     #getValidIdx(idx){
         let mod = (x,n) => ((x % n) + n) % n;
         return mod(idx, this.#numOfImgs);
     }
 
     #showSlide(idx=0){
+        this.#cancelSlideTimeout();
         idx = this.#getValidIdx(idx);
         this.#unselectCurrentSlideIcon();
         this.#imagesDiv.style.left = `-${idx*100}%`;
         this.#currentImg = idx;
         this.#selectCurrentSlideIcon();
+        this.#initSlideTimeout(this.#slideTimeoutInMs);
     }
 
     #previous(){
