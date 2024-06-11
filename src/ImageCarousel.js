@@ -1,4 +1,7 @@
 import './ImageCarousel.css';
+// Font Awesome 5 (Free)
+import '@fortawesome/fontawesome-free/js/fontawesome';
+import '@fortawesome/fontawesome-free/js/solid';
 
 export default class ImageCarousel{
     #imageCarouselDiv;
@@ -29,12 +32,13 @@ export default class ImageCarousel{
         // add interface
         let previousButton = document.createElement('button');
         previousButton.classList.add('previous-button');
-        previousButton.textContent = 'previous';
+        previousButton.innerHTML = this.#getIconHTML('fa-solid fa-chevron-left');
         previousButton.addEventListener('click',() => {this.#previous();});
 
         let nextButton = document.createElement('button');
         nextButton.classList.add('next-button');
         nextButton.textContent = 'next';
+        nextButton.innerHTML = this.#getIconHTML('fa-solid fa-chevron-right');
         nextButton.addEventListener('click',() => {this.#next();});
 
         this.#imageCarouselDiv.appendChild(previousButton);
@@ -60,5 +64,9 @@ export default class ImageCarousel{
 
     #next(){
         this.#showSlide(this.#currentImg + 1);
+    }
+
+    #getIconHTML(icon){
+        return `<i class="${icon} fa-fw" aria-hidden="true"></i>`;
     }
 }
