@@ -2,10 +2,16 @@
     --prev-next-color: white;
     --prev-next-shadow: 0px 0px 5px black;
     --prev-next-padding: 0%;
-    --prev-next-width: 15%;
-    --prev-next-height: 100%;
     --prev-next-icon-size: 50px;
-    --navigation-padding: 10%;
+    --prev-next-width: max(15%, var(--prev-next-icon-size));
+    --prev-next-height: 100%;
+
+    --navigation-color: white;
+    --navigation-shadow: 0px 0px 5px black;
+    --navigation-padding: 3%;
+    --navigation-icon-padding: 8px;
+    --navigation-icon-size: 8px;
+
     position: relative;
 }
 
@@ -41,6 +47,9 @@
     height: var(--prev-next-height);
     font-size: var(--prev-next-icon-size);
     filter: drop-shadow(var(--prev-next-shadow));
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .image-carousel button.previous-button{
     left: var(--prev-next-padding); /* 0% + var(--prev-next-padding);*/
@@ -55,4 +64,13 @@
     left: 50%;
     transform: translateX(-50%);
     bottom: var(--navigation-padding); /* 0% + var(--navigation-padding);*/
+}
+
+.image-carousel .image-carousel-navigation .slide-dot-button{
+    background-color: transparent;
+    border: none;
+    color: var(--navigation-color);
+    padding: var(--navigation-icon-padding);
+    font-size: var(--navigation-icon-size);
+    filter: drop-shadow(var(--navigation-shadow));
 }

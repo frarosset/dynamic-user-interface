@@ -2,6 +2,7 @@ import './ImageCarousel.css';
 // Font Awesome 5 (Free)
 import '@fortawesome/fontawesome-free/js/fontawesome';
 import '@fortawesome/fontawesome-free/js/solid';
+import '@fortawesome/fontawesome-free/js/regular';
 
 export default class ImageCarousel{
     #imageCarouselDiv;
@@ -49,7 +50,7 @@ export default class ImageCarousel{
         for (let i=0; i<this.#numOfImgs; i++){
             const slideDotButton = document.createElement('button');
             slideDotButton.classList.add('slide-dot-button');
-            slideDotButton.innerHTML = this.#getIconHTML('fa-solid fa-circle')+i;
+            slideDotButton.innerHTML = this.#getIconHTML('fa-regular fa-circle');
             slideDotButton.addEventListener('click',() => {this.#showSlide(i);});
             navigationDiv.appendChild(slideDotButton);
         }
