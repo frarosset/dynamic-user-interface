@@ -5,15 +5,16 @@
     box-sizing: border-box;
 }
 
+.image-carousel-frame{
+    border: 5px solid coral;
+    overflow: hidden;
+}
+
 .image-carousel-slides{
     display: flex;
+    position: relative;
 }
 
 .image-carousel img{
     width: 100%;
-}
-
-.image-carousel-frame{
-    border: 5px solid coral;
-    overflow: hidden;
 }
