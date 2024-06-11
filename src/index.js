@@ -25,6 +25,10 @@ function init(){
     body.appendChild(header);
     
     const dropDownMenu = new DropDownMenu(header,menuData,showMenuOnHover,btnIcon,btnLabel);
+
+    // add an horizonatal line, just for testing purposes
+    const separator = document.createElement('hr');
+    header.appendChild(separator);
 }
 
 init();

@@ -18,6 +18,9 @@ export default class DropDownMenu{
         this.#button.classList.add('drop-down-button');
         this.#setIconAndLabel(this.#button,btnIcon,btnLabel);
 
+        let contentCnt = document.createElement('div');
+        contentCnt.classList.add('drop-down-content-cnt');
+
         this.#content = document.createElement('ul');
         this.#content.classList.add('drop-down-content');
 
@@ -27,7 +30,8 @@ export default class DropDownMenu{
         });
 
         this.#dropDownDiv.appendChild(this.#button);
-        this.#dropDownDiv.appendChild(this.#content);
+        contentCnt.appendChild(this.#content);
+        this.#dropDownDiv.appendChild(contentCnt);
         parentDiv.appendChild(this.#dropDownDiv);
 
         this.#button.addEventListener('click', () => {
