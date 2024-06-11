@@ -12,6 +12,8 @@
     --navigation-icon-padding: 8px;
     --navigation-icon-size: 8px;
 
+    --slide-duration: 1s;
+
     position: relative;
 }
 
@@ -29,6 +31,7 @@
 .image-carousel-slides{
     display: flex;
     position: relative;
+    transition: left ease-out var(--slide-duration);
 }
 
 .image-carousel img{
