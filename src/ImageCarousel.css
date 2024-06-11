@@ -5,6 +5,7 @@
     --prev-next-width: 15%;
     --prev-next-height: 100%;
     --prev-next-icon-size: 50px;
+    --navigation-padding: 10%;
     position: relative;
 }
 
@@ -32,7 +33,7 @@
 .image-carousel button.next-button{
     position: absolute;
     top: 50%;
-    transform: translatey(-50%);
+    transform: translateY(-50%);
     background-color: transparent;
     border: none;
     color: var(--prev-next-color);
@@ -51,4 +52,7 @@
 .image-carousel .image-carousel-navigation{
     position: absolute;
     z-index: 1;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: var(--navigation-padding); /* 0% + var(--navigation-padding);*/
 }
