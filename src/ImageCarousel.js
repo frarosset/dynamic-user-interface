@@ -26,7 +26,19 @@ export default class ImageCarousel{
         frameDiv.appendChild(this.#imagesDiv);
         this.#imageCarouselDiv.appendChild(frameDiv);
 
-console.log(this.#currentImg);        
+        // add interface
+        let previousButton = document.createElement('button');
+        previousButton.classList.add('previous-button');
+        previousButton.textContent = 'previous';
+        previousButton.addEventListener('click',() => {this.#previous();});
+
+        let nextButton = document.createElement('button');
+        nextButton.classList.add('next-button');
+        nextButton.textContent = 'next';
+        nextButton.addEventListener('click',() => {this.#next();});
+
+        this.#imageCarouselDiv.appendChild(previousButton);
+        this.#imageCarouselDiv.appendChild(nextButton);
 
         parentDiv.appendChild(this.#imageCarouselDiv);
     }
