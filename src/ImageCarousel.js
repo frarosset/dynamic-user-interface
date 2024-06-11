@@ -26,7 +26,7 @@ export default class ImageCarousel{
         frameDiv.appendChild(this.#imagesDiv);
         this.#imageCarouselDiv.appendChild(frameDiv);
 
-        this.#showSlide(1);
+console.log(this.#currentImg);        
 
         parentDiv.appendChild(this.#imageCarouselDiv);
     }
@@ -40,5 +40,13 @@ export default class ImageCarousel{
         idx = this.#getValidIdx(idx);
         this.#imagesDiv.style.left = `-${idx*100}%`;
         this.#currentImg = idx;
+    }
+
+    #previous(){
+        this.#showSlide(this.#currentImg - 1);
+    }
+
+    #next(){
+        this.#showSlide(this.#currentImg + 1);
     }
 }
