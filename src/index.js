@@ -45,6 +45,9 @@ function init(){
     body.appendChild(main);
 
     const imageCarousel = new ImageCarousel(main,imagesPaths);
+    main.style.margin = 'auto';
+    main.style.width = '80vw';
+    main.style.height = '80vh';
 }
 
 init();
