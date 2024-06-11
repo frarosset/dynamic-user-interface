@@ -1,4 +1,5 @@
 import DropDownMenu from './DropDownMenu.js';
+import ImageCarousel from './ImageCarousel.js';
 
 // menu options
 const menuData = [
@@ -18,6 +19,12 @@ const showMenuOnHover = true;
 const btnIcon = 'fa-solid fa-bars';
 const btnLabel = 'MENU';
 
+// image carousel
+const imageWidth = 1600;
+const imageHeight = 900;
+const imageNum = 5;
+const imagesPaths = Array(imageNum).fill(`https://lipsum.app/random/${imageWidth}x${imageHeight}`);
+
 function init(){
     const body = document.querySelector('body');
 
@@ -34,6 +41,10 @@ function init(){
     const separator = document.createElement('hr');
     body.appendChild(separator);
 
+    const main = document.createElement('main');
+    body.appendChild(main);
+
+    const imageCarousel = new ImageCarousel(main,imagesPaths);
 }
 
 init();
