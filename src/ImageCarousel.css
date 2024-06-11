@@ -1,3 +1,7 @@
 .image-carousel{
     background-color:coral;
 }
+
+.image-carousel-slides{
+    display: flex;
+}
