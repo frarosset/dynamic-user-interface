@@ -47,3 +47,8 @@
 .image-carousel button.next-button{
     right: var(--prev-next-padding); /* 0% + var(--prev-next-padding);*/
 }
+
+.image-carousel .image-carousel-navigation{
+    position: absolute;
+    z-index: 1;
+}

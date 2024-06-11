@@ -29,20 +29,33 @@ export default class ImageCarousel{
         frameDiv.appendChild(this.#imagesDiv);
         this.#imageCarouselDiv.appendChild(frameDiv);
 
-        // add interface
-        let previousButton = document.createElement('button');
+        // add interface (previous and next buttons)
+        const previousButton = document.createElement('button');
         previousButton.classList.add('previous-button');
         previousButton.innerHTML = this.#getIconHTML('fa-solid fa-chevron-left');
         previousButton.addEventListener('click',() => {this.#previous();});
 
-        let nextButton = document.createElement('button');
+        const nextButton = document.createElement('button');
         nextButton.classList.add('next-button');
-        nextButton.textContent = 'next';
         nextButton.innerHTML = this.#getIconHTML('fa-solid fa-chevron-right');
         nextButton.addEventListener('click',() => {this.#next();});
 
         this.#imageCarouselDiv.appendChild(previousButton);
         this.#imageCarouselDiv.appendChild(nextButton);
+
+        // add interface (previous and next buttons)
+        const navigationDiv = document.createElement('div');
+        navigationDiv.classList.add('image-carousel-navigation');
+        for (let i=0; i<this.#numOfImgs; i++){
+            const slideDotButton = document.createElement('button');
+            slideDotButton.classList.add('slide-dot-button');
+            slideDotButton.innerHTML = this.#getIconHTML('fa-solid fa-circle')+i;
+            slideDotButton.addEventListener('click',() => {this.#showSlide(i);});
+            navigationDiv.appendChild(slideDotButton);
+        }
+
+
+        this.#imageCarouselDiv.appendChild(navigationDiv);
 
         parentDiv.appendChild(this.#imageCarouselDiv);
     }
