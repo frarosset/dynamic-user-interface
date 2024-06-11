@@ -2,8 +2,9 @@ import './ImageCarousel.css';
 
 export default class ImageCarousel{
     #imageCarouselDiv;
-    #imgs = [];
     #imagesDiv;
+    #numOfImgs;
+    #currentImg=0;
 
     constructor(parentDiv,imagesPaths){
         this.#imageCarouselDiv = document.createElement('div');
@@ -14,24 +15,30 @@ export default class ImageCarousel{
         
         this.#imagesDiv = document.createElement('div');
         this.#imagesDiv.classList.add('image-carousel-slides');
+
+        this.#numOfImgs = imagesPaths.length;
         imagesPaths.forEach(imgPath => {
             const img = document.createElement('img');
             img.setAttribute('src',imgPath);
-
-            this.#imgs.push(img);
             this.#imagesDiv.appendChild(img);
         });
 
         frameDiv.appendChild(this.#imagesDiv);
         this.#imageCarouselDiv.appendChild(frameDiv);
 
-        console.log(this.#imgs);
         this.#showSlide(1);
 
         parentDiv.appendChild(this.#imageCarouselDiv);
     }
 
+    #getValidIdx(idx){
+        let mod = (x,n) => ((x % n) + n) % n;
+        return mod(idx, this.#numOfImgs);
+    }
+
     #showSlide(idx=0){
+        idx = this.#getValidIdx(idx);
         this.#imagesDiv.style.left = `-${idx*100}%`;
+        this.#currentImg = idx;
     }
 }
