@@ -1,3 +1,8 @@
+.image-carousel{
+    --prev-next-padding: 5%;
+    position: relative;
+}
+
 .image-carousel,
 .image-carousel *{
     margin: 0;
@@ -6,7 +11,6 @@
 }
 
 .image-carousel-frame{
-    border: 5px solid coral;
     overflow: hidden;
 }
 
@@ -17,4 +21,17 @@
 
 .image-carousel img{
     width: 100%;
+}
+
+.image-carousel button.previous-button,
+.image-carousel button.next-button{
+    position: absolute;
+    top: 50%;
+    transform: translatey(-50%);
+}
+.image-carousel button.previous-button{
+    left: var(--prev-next-padding); /* 0% + var(--prev-next-padding);*/
+}
+.image-carousel button.next-button{
+    right: var(--prev-next-padding); /* 0% + var(--prev-next-padding);*/
 }
