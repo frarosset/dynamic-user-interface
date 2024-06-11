@@ -9,6 +9,15 @@ export default class ImageCarousel{
     #imagesDiv;
     #numOfImgs;
     #currentImg=0;
+    #navigationDiv;
+
+    #iconsData = {
+        navigationDotDataPrefix: 'fa-regular',
+        navigationDotDataPrefixCurrent: 'fa-solid',
+        navigationDotDataIcon: 'fa-circle',
+        previousData: 'fa-solid fa-chevron-left',
+        nextData: 'fa-solid fa-chevron-right'
+    };
 
     constructor(parentDiv,imagesPaths){
         this.#imageCarouselDiv = document.createElement('div');
@@ -33,30 +42,37 @@ export default class ImageCarousel{
         // add interface (previous and next buttons)
         const previousButton = document.createElement('button');
         previousButton.classList.add('previous-button');
-        previousButton.innerHTML = this.#getIconHTML('fa-solid fa-chevron-left');
+        previousButton.innerHTML = this.#getIconHTML(this.#iconsData.previousData);
         previousButton.addEventListener('click',() => {this.#previous();});
 
         const nextButton = document.createElement('button');
         nextButton.classList.add('next-button');
-        nextButton.innerHTML = this.#getIconHTML('fa-solid fa-chevron-right');
+        nextButton.innerHTML = this.#getIconHTML(this.#iconsData.nextData);
         nextButton.addEventListener('click',() => {this.#next();});
 
         this.#imageCarouselDiv.appendChild(previousButton);
         this.#imageCarouselDiv.appendChild(nextButton);
 
         // add interface (previous and next buttons)
-        const navigationDiv = document.createElement('div');
-        navigationDiv.classList.add('image-carousel-navigation');
+        this.#navigationDiv = document.createElement('div');
+        this.#navigationDiv.classList.add('image-carousel-navigation');
         for (let i=0; i<this.#numOfImgs; i++){
             const slideDotButton = document.createElement('button');
             slideDotButton.classList.add('slide-dot-button');
-            slideDotButton.innerHTML = this.#getIconHTML('fa-regular fa-circle');
+
+            let iconDataPrefix;
+            const iconDataIcon = this.#iconsData.navigationDotDataIcon;
+            if (i===this.#currentImg)
+                iconDataPrefix = this.#iconsData.navigationDotDataPrefixCurrent;
+            else
+                iconDataPrefix = this.#iconsData.navigationDotDataPrefix;
+            slideDotButton.innerHTML = this.#getIconHTML(`${iconDataPrefix} ${iconDataIcon}`);
+
             slideDotButton.addEventListener('click',() => {this.#showSlide(i);});
-            navigationDiv.appendChild(slideDotButton);
+            this.#navigationDiv.appendChild(slideDotButton);
         }
 
-
-        this.#imageCarouselDiv.appendChild(navigationDiv);
+        this.#imageCarouselDiv.appendChild(this.#navigationDiv);
 
         parentDiv.appendChild(this.#imageCarouselDiv);
     }
@@ -68,8 +84,10 @@ export default class ImageCarousel{
 
     #showSlide(idx=0){
         idx = this.#getValidIdx(idx);
+        this.#unselectCurrentSlideIcon();
         this.#imagesDiv.style.left = `-${idx*100}%`;
         this.#currentImg = idx;
+        this.#selectCurrentSlideIcon();
     }
 
     #previous(){
@@ -82,5 +100,25 @@ export default class ImageCarousel{
 
     #getIconHTML(icon){
         return `<i class="${icon} fa-fw" aria-hidden="true"></i>`;
+    }
+    #changeIconHTML(iconHtml,dataPrefix=undefined,dataIcon=undefined){
+        if (dataPrefix)
+            iconHtml.setAttribute('data-prefix', dataPrefix);
+        if (dataIcon)
+            iconHtml.setAttribute('data-icon', dataIcon);
+    }
+
+    #getSlideDot(idx){
+        return this.#navigationDiv.children[idx].children[0];
+    }
+    #selectCurrentSlideIcon(){
+        const currentSlideDot = this.#getSlideDot(this.#currentImg);
+        const iconDataPrefix = this.#iconsData.navigationDotDataPrefixCurrent; 
+        this.#changeIconHTML(currentSlideDot,iconDataPrefix);
+    }
+    #unselectCurrentSlideIcon(){
+        const currentSlideDot = this.#getSlideDot(this.#currentImg);
+        const iconDataPrefix = this.#iconsData.navigationDotDataPrefix;
+        this.#changeIconHTML(currentSlideDot,iconDataPrefix);
     }
 }
