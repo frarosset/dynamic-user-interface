@@ -47,8 +47,7 @@ export default class ImageCarousel{
         parentDiv.appendChild(this.#imageCarouselDiv);
 
         // initalize timeout to advance slides automatically
-        this.#slideTimeoutInMs = slideTimeoutInMs;
-        this.#initSlideTimeout();
+        this.#initSlideTimeout(slideTimeoutInMs);
     }
 
     #initFrameDivWithImages(imagesPaths){
@@ -141,7 +140,24 @@ export default class ImageCarousel{
         return navigationDiv;
     }
 
-    #initSlideTimeout(){
+    #initSlideTimeout(slideTimeoutInMs){
+        this.#slideTimeoutInMs = slideTimeoutInMs;
+        this.#setSlideTimeout();
+
+        // Suspend cycling animation of image sarousel when page visibility is hidden
+        // - it saves resources when the page is not visible.
+        // - it solves a bug where the navigation dots were not properly updated when the page 
+        //   was not visible but the cycling was active.
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") {
+                this.#setSlideTimeout();
+            } else { //document.visibilityState` === "hidden"
+                this.#cancelSlideTimeout();
+            }
+        });
+    }
+
+    #setSlideTimeout(){
         this.#slideTimeoutObj = setTimeout(() => {this.#next();}, this.#slideTimeoutInMs);
     }
     #cancelSlideTimeout(){
@@ -180,7 +196,7 @@ export default class ImageCarousel{
         this.#setCurrentImgData(imgIdx);
 
         this.#selectCurrentSlideIcon();
-        this.#initSlideTimeout();
+        this.#setSlideTimeout();
     }
 
     #previous(){
