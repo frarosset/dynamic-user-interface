@@ -7,9 +7,16 @@ import '@fortawesome/fontawesome-free/js/regular';
 export default class ImageCarousel{
     #imageCarouselDiv;
     #imagesDiv;
-    #numOfImgs;
-    #currentImg=0;
     #navigationDiv;
+
+    #numOfImgs;
+    #idxOfFirstImg;
+    #idxOfLastImg;
+    #idxOfAppendedFirstImg;
+
+    #currentImgIdx; // 0, 1, ..., #numOfImgs-1 - the index of the shown image
+    #idxForLeft; // #idxOfFirstImg, ..., #idxOfLastImg, #idxOfAppendedFirstImg - the index of the shown image in #imagesDiv
+
     #slideTimeoutObj = null;
     #slideTimeoutInMs;
 
@@ -47,17 +54,42 @@ export default class ImageCarousel{
         this.#imagesDiv = document.createElement('div');
         this.#imagesDiv.classList.add('image-carousel-slides');
 
+        // append first image at the end (but don't count it in the #numOfImages)
+        // ie, if you have N images, [i], for i=1,2,...N, in this.#imagesDiv you have:
+        // [1],[2],[3],...,[N],[1']
+        // this will be used to make a seamless transition N -> 1 (see below)
         this.#numOfImgs = imagesPaths.length;
-        imagesPaths.forEach(imgPath => {
+        [...imagesPaths,imagesPaths[0]].forEach(imgPath => {
             const img = document.createElement('img');
             img.setAttribute('src',imgPath);
             this.#imagesDiv.appendChild(img);
         });
+        this.#idxOfFirstImg = 0; // index of [1] (in this.#imagesDiv)
+        this.#idxOfLastImg = this.#numOfImgs - 1 + this.#idxOfFirstImg; // index of [N]
+        this.#idxOfAppendedFirstImg = this.#idxOfLastImg + 1; // index of [1']
 
         const frameDiv = document.createElement('div');
         frameDiv.classList.add('image-carousel-frame');
         frameDiv.appendChild(this.#imagesDiv);
 
+        // when you do the slide transition N -> 1, first do
+        // [N] -> [1'] (applying the transition duration defined in the .css file)
+        // once this is completed, a 'transitionend' event is fired,
+        // then, temporarily suspend the transition CSS property to make a
+        // [1'] -> [1] transition instantaneously
+        // (to do this, just just have to update the left property of this.#imagesDiv)
+        this.#imagesDiv.addEventListener('transitionend' , ()=>{
+            if (this.#idxForLeft === this.#idxOfAppendedFirstImg){
+                // transition [N] -> [1'] has just ended, so go to [1] without transition
+                this.#suspendTransitionToCall(() => {
+                    this.#setImagesDivLeft(this.#idxOfFirstImg);
+                });
+            }
+        });
+
+        // initialize the first image shown
+        this.#setCurrentImgData(0);
+        
         return frameDiv;
     }
 
@@ -88,7 +120,7 @@ export default class ImageCarousel{
             const slideDotButton = document.createElement('button');
             slideDotButton.classList.add('slide-dot-button');
 
-            if (i===this.#currentImg)
+            if (i===this.#currentImgIdx)
                 iconDataPrefix = this.#iconsData.navigationDotDataPrefixCurrent;
             else
                 iconDataPrefix = this.#iconsData.navigationDotDataPrefix;
@@ -107,27 +139,47 @@ export default class ImageCarousel{
         clearTimeout(this.#slideTimeoutObj);
     }
 
-    #getValidIdx(idx){
+    #getValidImg(imgIdx){
         let mod = (x,n) => ((x % n) + n) % n;
-        return mod(idx, this.#numOfImgs);
+        return mod(imgIdx, this.#numOfImgs);
     }
 
-    #showSlide(idx=0){
+    #setCurrentImgData(imgIdx){
+        this.#currentImgIdx = this.#getValidImg(imgIdx);
+        const idxForLeft = this.#getIdxForLeft(imgIdx);
+        this.#setImagesDivLeft(idxForLeft);
+    }
+
+    #setImagesDivLeft(idxForLeft){
+        this.#idxForLeft =  idxForLeft; 
+        this.#imagesDiv.style.left = `-${idxForLeft*100}%`;
+    }
+
+    #getIdxForLeft(imgIdx){
+        let idx = imgIdx + this.#idxOfFirstImg; 
+        if (idx === this.#idxOfAppendedFirstImg){
+            return idx;
+        } else {
+            return this.#currentImgIdx + this.#idxOfFirstImg;
+        } 
+    }
+
+    #showSlide(imgIdx=0){
         this.#cancelSlideTimeout();
-        idx = this.#getValidIdx(idx);
         this.#unselectCurrentSlideIcon();
-        this.#imagesDiv.style.left = `-${idx*100}%`;
-        this.#currentImg = idx;
+
+        this.#setCurrentImgData(imgIdx);
+
         this.#selectCurrentSlideIcon();
-        this.#initSlideTimeout(this.#slideTimeoutInMs);
+        this.#initSlideTimeout();
     }
 
     #previous(){
-        this.#showSlide(this.#currentImg - 1);
+        this.#showSlide(this.#currentImgIdx - 1);
     }
 
     #next(){
-        this.#showSlide(this.#currentImg + 1);
+        this.#showSlide(this.#currentImgIdx + 1);
     }
 
     #getIconHTML(icon){
@@ -140,17 +192,33 @@ export default class ImageCarousel{
             iconHtml.setAttribute('data-icon', dataIcon);
     }
 
-    #getSlideDot(idx){
-        return this.#navigationDiv.children[idx].children[0];
+    #getSlideDot(imgIdx){
+        return this.#navigationDiv.children[imgIdx].children[0];
     }
     #selectCurrentSlideIcon(){
-        const currentSlideDot = this.#getSlideDot(this.#currentImg);
+        const currentSlideDot = this.#getSlideDot(this.#currentImgIdx);
         const iconDataPrefix = this.#iconsData.navigationDotDataPrefixCurrent; 
         this.#changeIconHTML(currentSlideDot,iconDataPrefix);
     }
     #unselectCurrentSlideIcon(){
-        const currentSlideDot = this.#getSlideDot(this.#currentImg);
+        const currentSlideDot = this.#getSlideDot(this.#currentImgIdx);
         const iconDataPrefix = this.#iconsData.navigationDotDataPrefix;
         this.#changeIconHTML(currentSlideDot,iconDataPrefix);
+    }
+
+    #suspendTransitionToCall(callback){
+        this.#imagesDiv.classList.add('suspend-transition');
+        // trigger a reflow to be sure the above class is applied
+        this.#triggerReflow(this.#imagesDiv); 
+        
+        callback();
+        // trigger a reflow to be sure any operation on this.#imagesDiv is applied    
+        this.#triggerReflow(this.#imagesDiv); 
+        
+        this.#imagesDiv.classList.remove('suspend-transition');
+    }
+
+    #triggerReflow(element){
+        element.offsetTop;
     }
 }

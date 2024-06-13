@@ -35,7 +35,11 @@
     height: 100%;
     display: flex;
     position: relative;
-    transition: left ease-out var(--slide-duration);
+    transition: left ease-in-out var(--slide-duration);
+}
+
+.image-carousel-slides.suspend-transition{
+    transition: none !important;
 }
 
 .image-carousel img{
@@ -71,6 +75,9 @@
 
 .image-carousel .image-carousel-navigation{
     position: absolute;
+    width: 90%;
+    display: flex;
+    justify-content: center;
     z-index: 1;
     left: 50%;
     transform: translateX(-50%);
