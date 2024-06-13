@@ -13,6 +13,7 @@ export default class ImageCarousel{
     #idxOfFirstImg;
     #idxOfLastImg;
     #idxOfAppendedFirstImg;
+    #idxOfPrependedLastImg;
 
     #currentImgIdx; // 0, 1, ..., #numOfImgs-1 - the index of the shown image
     #idxForLeft; // #idxOfFirstImg, ..., #idxOfLastImg, #idxOfAppendedFirstImg - the index of the shown image in #imagesDiv
@@ -54,19 +55,21 @@ export default class ImageCarousel{
         this.#imagesDiv = document.createElement('div');
         this.#imagesDiv.classList.add('image-carousel-slides');
 
-        // append first image at the end (but don't count it in the #numOfImages)
+        // append first image at the end (but don't count it in the #numOfImages),
+        // as well as prepend the last image at the beginning
         // ie, if you have N images, [i], for i=1,2,...N, in this.#imagesDiv you have:
-        // [1],[2],[3],...,[N],[1']
-        // this will be used to make a seamless transition N -> 1 (see below)
+        // [N'],[1],[2],[3],...,[N],[1']
+        // this will be used to make a seamless transition N -> 1 or 1 -> N (see below)
         this.#numOfImgs = imagesPaths.length;
-        [...imagesPaths,imagesPaths[0]].forEach(imgPath => {
+        [imagesPaths[this.#numOfImgs-1],...imagesPaths,imagesPaths[0]].forEach(imgPath => {
             const img = document.createElement('img');
             img.setAttribute('src',imgPath);
             this.#imagesDiv.appendChild(img);
         });
-        this.#idxOfFirstImg = 0; // index of [1] (in this.#imagesDiv)
+        this.#idxOfFirstImg = 1; // index of [1] (in this.#imagesDiv)
         this.#idxOfLastImg = this.#numOfImgs - 1 + this.#idxOfFirstImg; // index of [N]
         this.#idxOfAppendedFirstImg = this.#idxOfLastImg + 1; // index of [1']
+        this.#idxOfPrependedLastImg = this.#idxOfFirstImg - 1; // index of [N']
 
         const frameDiv = document.createElement('div');
         frameDiv.classList.add('image-carousel-frame');
@@ -78,11 +81,17 @@ export default class ImageCarousel{
         // then, temporarily suspend the transition CSS property to make a
         // [1'] -> [1] transition instantaneously
         // (to do this, just just have to update the left property of this.#imagesDiv)
+        // Similar considerations can be made for the 1->N transition
         this.#imagesDiv.addEventListener('transitionend' , ()=>{
             if (this.#idxForLeft === this.#idxOfAppendedFirstImg){
                 // transition [N] -> [1'] has just ended, so go to [1] without transition
                 this.#suspendTransitionToCall(() => {
                     this.#setImagesDivLeft(this.#idxOfFirstImg);
+                });
+            } else if (this.#idxForLeft === this.#idxOfPrependedLastImg){
+                // transition [1] -> [N'] has just ended, so go to [N] without transition
+                this.#suspendTransitionToCall(() => {
+                    this.#setImagesDivLeft(this.#idxOfLastImg);
                 });
             }
         });
@@ -157,8 +166,8 @@ export default class ImageCarousel{
 
     #getIdxForLeft(imgIdx){
         let idx = imgIdx + this.#idxOfFirstImg; 
-        if (idx === this.#idxOfAppendedFirstImg){
-            return idx;
+        if (idx === this.#idxOfAppendedFirstImg || idx === this.#idxOfPrependedLastImg){
+                return idx;
         } else {
             return this.#currentImgIdx + this.#idxOfFirstImg;
         } 
