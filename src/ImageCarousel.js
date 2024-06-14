@@ -111,10 +111,38 @@ export default class ImageCarousel{
             this.#inTransition=false;
         });
 
+        this.#initHorizontalSwipeDetection(frameDiv,this.#next.bind(this),this.#previous.bind(this));
+
         // initialize the first image shown
         this.#setCurrentImgData(0);
         
         return frameDiv;
+    }
+
+    
+    #initHorizontalSwipeDetection(element,callbackLeft=()=>{},callbackRight=()=>{}){
+        let xTouchStart;
+
+        element.addEventListener("contextmenu", (e) => {
+            e.preventDefault();
+        });
+
+        // based on https://stackoverflow.com/questions/2264072/detect-a-finger-swipe-through-javascript-on-the-iphone-and-android
+        element.addEventListener('touchstart' , (e)=>{
+            xTouchStart = e.changedTouches[0].screenX;
+        });
+
+        element.addEventListener('touchend' , (e)=>{
+            let xTouchEnd = e.changedTouches[0].screenX;
+            const sensitivityInPixel = 10;
+            let delta = xTouchEnd - xTouchStart;
+
+            if(delta  > sensitivityInPixel){
+               callbackRight();
+            } else if (delta < -sensitivityInPixel) {
+                callbackLeft();
+            }
+        });
     }
 
     #initPreviousButton(){
