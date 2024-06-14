@@ -1,5 +1,5 @@
 .drop-down-menu{
-    --color-light: palevioletred;
+    --color-light: #C8A2C8;
     --color-dark: purple;
     --color-white: white;
     --color-black: black;
@@ -46,6 +46,7 @@
 .drop-down-menu{
     position: relative;
     width: min-content;
+    z-index: 1000;
 }
 
 .drop-down-button{

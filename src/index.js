@@ -36,6 +36,8 @@ function init(){
     const dropDownMenu3 = new DropDownMenu(header,menuData,showMenuOnHover,btnIcon,btnLabel,'right');
     header.style.display = 'flex';
     header.style.justifyContent = 'space-between';
+    header.style.position = 'relative';
+    header.style.zIndex = '100';
 
     // add an horizonatal line, just for testing purposes
     const separator = document.createElement('hr');
