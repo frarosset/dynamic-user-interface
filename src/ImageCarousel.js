@@ -23,6 +23,7 @@ export default class ImageCarousel{
     #slideTimeoutInMs;
 
     #autoCycling;
+    #inTransition;
 
     #iconsData = {
         navigationDotDataPrefix: 'fa-regular',
@@ -106,6 +107,8 @@ export default class ImageCarousel{
                     this.#setImagesDivLeft(this.#idxOfLastImg);
                 });
             }
+
+            this.#inTransition=false;
         });
 
         // initialize the first image shown
@@ -249,7 +252,14 @@ export default class ImageCarousel{
         this.#cancelSlideTimeout();
         this.#unselectCurrentSlideIcon();
 
-        this.#setCurrentImgData(imgIdx);
+        if (imgIdx !== this.#currentImgIdx && !this.#inTransition){
+            // imgIdx !== this.#currentImgIdx: ensure a transition occurs, 
+            //   to trigger the transitionend event
+            // !this.#inTransition: don't trigger a new transition if there is
+            //   one in progress (to avoid non-seamless transitions between slides 1 and N)
+            this.#inTransition = true;
+            this.#setCurrentImgData(imgIdx);
+        }
 
         this.#selectCurrentSlideIcon();
         this.#setSlideTimeout();
