@@ -17,7 +17,7 @@ export default class ImageCarousel{
     #idxOfPrependedLastImg;
 
     #currentImgIdx; // 0, 1, ..., #numOfImgs-1 - the index of the shown image
-    #idxForLeft; // #idxOfFirstImg, ..., #idxOfLastImg, #idxOfAppendedFirstImg - the index of the shown image in #imagesDiv
+    #idxForLeft=0; // #idxOfFirstImg, ..., #idxOfLastImg, #idxOfAppendedFirstImg - the index of the shown image in #imagesDiv
 
     #slideTimeoutObj = null;
     #slideTimeoutInMs;
@@ -235,9 +235,11 @@ export default class ImageCarousel{
     }
 
     #setImagesDivLeft(idxForLeft){
+        this.#unselectCurrentSlideImg();
         this.#idxForLeft =  idxForLeft; 
         //this.#imagesDiv.style.left = `-${idxForLeft*100}%`;
         this.#imagesDiv.style.transform = `translateX(-${idxForLeft*100}%)`;
+        this.#selectCurrentSlideImg();
     }
 
     #getIdxForLeft(imgIdx){
@@ -296,6 +298,23 @@ export default class ImageCarousel{
         const currentSlideDot = this.#getSlideDot(this.#currentImgIdx);
         const iconDataPrefix = this.#iconsData.navigationDotDataPrefix;
         this.#changeIconHTML(currentSlideDot,iconDataPrefix);
+    }
+   
+    #selectCurrentSlideImg(){
+        this.#imagesDiv.children[this.#idxForLeft].classList.add('current');
+        if (this.#idxForLeft===this.#idxOfAppendedFirstImg){
+            this.#imagesDiv.children[this.#idxOfFirstImg].classList.add('current');
+        } else if (this.#idxForLeft===this.#idxOfPrependedLastImg){
+            this.#imagesDiv.children[this.#idxOfLastImg].classList.add('current');
+        }
+    }
+    #unselectCurrentSlideImg(){
+        this.#imagesDiv.children[this.#idxForLeft].classList.remove('current');
+        if (this.#idxForLeft===this.#idxOfFirstImg){
+            this.#imagesDiv.children[this.#idxOfAppendedFirstImg].classList.remove('current');
+        } else if (this.#idxForLeft===this.#idxOfLastImg){
+            this.#imagesDiv.children[this.#idxOfPrependedLastImg].classList.remove('current');
+        }
     }
 
     #suspendTransitionToCall(callback){

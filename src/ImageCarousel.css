@@ -15,6 +15,9 @@
     /* stop-resume-cycling-button shares some properties with the navigation menu */
     --stop-resume-cycling-button-icon-size: 20px; 
 
+    --frame-bg-col: white;
+    --non-current-img-opacity: 40%;
+
     --slide-duration: 1s;
 
     position: relative;
@@ -31,7 +34,8 @@
 
 .image-carousel-frame{
     overflow: hidden;
-    height: 100%;
+    height: 100%; 
+    background-color: var(--frame-bg-col);
 }
 
 .image-carousel-slides{
@@ -51,6 +55,12 @@
     height: 100%;
     overflow: hidden; 
     object-fit: cover;
+    opacity: var(--non-current-img-opacity);
+    transition: opacity ease-in-out var(--slide-duration);
+}
+
+.image-carousel img.current{
+    opacity: 100%;
 }
 
 .image-carousel button.previous-button,
