@@ -1,16 +1,12 @@
 import './DropDownMenu.css';
-// Font Awesome 5 (Free)
-import '@fortawesome/fontawesome-free/js/fontawesome';
-import '@fortawesome/fontawesome-free/js/solid';
-import '@fortawesome/fontawesome-free/js/regular';
-import '@fortawesome/fontawesome-free/js/brands';
+import {setFaIconAndLabel} from './fontAwesomeUtilities.js';
 
 export default class DropDownMenu{
     #dropDownDiv;
     #button;
     #content;
 
-    constructor(parentDiv, menuData, enableHover=false, btnIcon='fa-solid fa-bars', btnLabel='', contentPosition){
+    constructor(parentDiv, menuData, enableHover=false, btnFaIcon = {prefix: 'solid', icon: 'bars'}, btnLabel='', contentPosition){
         this.#dropDownDiv = document.createElement('div');
         this.#dropDownDiv.classList.add('drop-down-menu');
         if (contentPosition !== 'left' && contentPosition !== 'right')
@@ -19,7 +15,7 @@ export default class DropDownMenu{
 
         this.#button = document.createElement('button');
         this.#button.classList.add('drop-down-button');
-        this.#setIconAndLabel(this.#button,btnIcon,btnLabel);
+        setFaIconAndLabel(this.#button,btnFaIcon,btnLabel);
 
         let contentCnt = document.createElement('div');
         contentCnt.classList.add('drop-down-content-cnt');
@@ -28,7 +24,6 @@ export default class DropDownMenu{
         this.#content.classList.add('drop-down-content');
 
         menuData.forEach(data => {
-            console.log(data);
             this.addItem(data);
         });
 
@@ -71,7 +66,7 @@ export default class DropDownMenu{
             const anchor = document.createElement('a');
             anchor.href = data.link;
             //anchor.target = '_blank'; // Opens link in a new tab
-            this.#setIconAndLabel(anchor,data.icon,data.label);
+            setFaIconAndLabel(anchor,data.faIcon,data.label);
 
             item.classList.add('anchor');
             item.appendChild(anchor);
@@ -79,35 +74,22 @@ export default class DropDownMenu{
             // action
             const action = document.createElement('button');
             action.addEventListener('click', data.action);
-            this.#setIconAndLabel(action,data.icon,data.label);
+            setFaIconAndLabel(action,data.faIcon,data.label);
 
             item.classList.add('action');
             item.appendChild(action);
         } else {
             item.classList.add('label');
-            this.#setIconAndLabel(item,data.icon,data.label);
+            setFaIconAndLabel(item,data.faIcon,data.label);
         }
 
         this.#content.appendChild(item);
     }
 
-    #setIconAndLabel(element,icon,label){
-        if (icon){
-            element.innerHTML = `${this.#getIconHTML(icon)}${label}`;
-        } else {
-            element.textContent = label;
-        }
-    }
-    #getIconHTML(icon){
-        return `<i class="${icon} fa-fw" aria-hidden="true"></i>`;
-    }
-
     #toggleVisibility(element,condition=undefined){
         element.classList.toggle('visible',condition);
-        console.log('Toggle',condition);
     }
     #toggleForcedVisibility(element,condition=undefined){
         element.classList.toggle('visible-forced',condition);
-        console.log('Toggle (forced)',condition);
     }
 }
