@@ -8,6 +8,7 @@ export default class ImageCarousel{
     #imageCarouselDiv;
     #imagesDiv;
     #navigationDiv;
+    #stopResumeCyclingButton;
 
     #numOfImgs;
     #idxOfFirstImg;
@@ -21,15 +22,20 @@ export default class ImageCarousel{
     #slideTimeoutObj = null;
     #slideTimeoutInMs;
 
+    #autoCycling;
+
     #iconsData = {
         navigationDotDataPrefix: 'fa-regular',
         navigationDotDataPrefixCurrent: 'fa-solid',
         navigationDotDataIcon: 'fa-circle',
         previousData: 'fa-solid fa-chevron-left',
-        nextData: 'fa-solid fa-chevron-right'
+        nextData: 'fa-solid fa-chevron-right',
+        cyclingButtonDataPrefix: 'fa-solid',
+        cyclingButtonDataIcon: 'fa-pause',
+        cyclingButtonDataIconStopped: 'fa-play'
     };
 
-    constructor(parentDiv,imagesPaths,slideTimeoutInMs=5000){
+    constructor(parentDiv,imagesPaths,slideTimeoutInMs=5000, autoCycling=true){
         this.#imageCarouselDiv = document.createElement('div');
         this.#imageCarouselDiv.classList.add('image-carousel');
 
@@ -44,10 +50,17 @@ export default class ImageCarousel{
         this.#navigationDiv = this.#initNavigationDiv();
         this.#imageCarouselDiv.appendChild(this.#navigationDiv);
 
+        // add stop/resume auto cycling of slide transition
+        this.#stopResumeCyclingButton = this.#initStopResumeAutoCyclingButton(autoCycling);
+        this.#imageCarouselDiv.appendChild(this.#stopResumeCyclingButton);
+
         parentDiv.appendChild(this.#imageCarouselDiv);
 
         // initalize timeout to advance slides automatically
         this.#initSlideTimeout(slideTimeoutInMs);
+
+        if(autoCycling)
+            this.#setSlideTimeout();
     }
 
     #initFrameDivWithImages(imagesPaths){
@@ -140,28 +153,71 @@ export default class ImageCarousel{
         return navigationDiv;
     }
 
+    #initStopResumeAutoCyclingButton(autoCycling){
+        const stopResumeCyclingButton = document.createElement('button');
+        stopResumeCyclingButton.classList.add('stop-resume-cycling-button');
+
+        // auto cycling disabled by default
+        this.#autoCycling = autoCycling;
+
+        const iconDataIcon = autoCycling ? this.#iconsData.cyclingButtonDataIcon : this.#iconsData.cyclingButtonDataIconStopped;
+        const iconDataPrefix = this.#iconsData.cyclingButtonDataPrefix;
+        stopResumeCyclingButton.innerHTML = this.#getIconHTML(`${iconDataPrefix} ${iconDataIcon}`);
+
+        stopResumeCyclingButton.addEventListener('click',() => {this.#toggleAutoCycling();});
+
+        return stopResumeCyclingButton;
+    }
+
+    #toggleAutoCycling(){
+        if (this.#autoCycling){
+            this.#cancelAutoCycling();
+        } else {
+            this.#setAutoCycling();
+        }
+    }
+    #setAutoCycling(){
+        this.#autoCycling = true; // set this first!
+        this.#setSlideTimeout(); // this sets the timeout only if this.#autoCycling is true
+
+        const iconDataIcon = this.#iconsData.cyclingButtonDataIcon;
+        this.#changeIconHTML(this.#stopResumeCyclingButton.children[0],null,iconDataIcon);
+    }
+    #cancelAutoCycling(){
+        this.#cancelSlideTimeout(); // this sets the timeout only if this.#autoCycling is true
+        this.#autoCycling = false; // // set this after!
+
+        const iconDataIcon = this.#iconsData.cyclingButtonDataIconStopped;
+        this.#changeIconHTML(this.#stopResumeCyclingButton.children[0],null,iconDataIcon);
+    }
+
     #initSlideTimeout(slideTimeoutInMs){
         this.#slideTimeoutInMs = slideTimeoutInMs;
-        this.#setSlideTimeout();
 
         // Suspend cycling animation of image sarousel when page visibility is hidden
         // - it saves resources when the page is not visible.
         // - it solves a bug where the navigation dots were not properly updated when the page 
         //   was not visible but the cycling was active.
         document.addEventListener("visibilitychange", () => {
-            if (document.visibilityState === "visible") {
-                this.#setSlideTimeout();
-            } else { //document.visibilityState` === "hidden"
-                this.#cancelSlideTimeout();
+            if (this.#autoCycling){
+                if (document.visibilityState === "visible") {
+                    this.#setSlideTimeout();
+                } else { //document.visibilityState` === "hidden"
+                    this.#cancelSlideTimeout();
+                }
             }
         });
     }
 
     #setSlideTimeout(){
-        this.#slideTimeoutObj = setTimeout(() => {this.#next();}, this.#slideTimeoutInMs);
+        if (this.#autoCycling){
+            this.#slideTimeoutObj = setTimeout(() => {this.#next();}, this.#slideTimeoutInMs);
+        }
     }
     #cancelSlideTimeout(){
-        clearTimeout(this.#slideTimeoutObj);
+        if (this.#autoCycling){
+            clearTimeout(this.#slideTimeoutObj);
+        }
     }
 
     #getValidImg(imgIdx){
@@ -214,7 +270,7 @@ export default class ImageCarousel{
         if (dataPrefix)
             iconHtml.setAttribute('data-prefix', dataPrefix);
         if (dataIcon)
-            iconHtml.setAttribute('data-icon', dataIcon);
+            iconHtml.setAttribute('data-icon', dataIcon.slice(3));
     }
 
     #getSlideDot(imgIdx){
