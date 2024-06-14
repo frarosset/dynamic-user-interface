@@ -150,7 +150,11 @@ export default class ImageCarousel{
                 iconDataPrefix = this.#iconsData.navigationDotDataPrefix;
             slideDotButton.innerHTML = this.#getIconHTML(`${iconDataPrefix} ${iconDataIcon}`);
 
-            slideDotButton.addEventListener('click',() => {this.#showSlide(i);});
+            slideDotButton.addEventListener('click',() => {
+                //this.#showSlide(i);
+                // this.#imagesDiv.style.left = `-${idx*100}%`;
+                this.#suspendTransitionToCall(() => {this.#showSlide(i);this.#inTransition=false;})
+            });
             navigationDiv.appendChild(slideDotButton);
         }
         return navigationDiv;
