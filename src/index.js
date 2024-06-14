@@ -4,19 +4,19 @@ import ImageCarousel from './ImageCarousel.js';
 // menu options
 const menuData = [
     {label: "Anchor 1", link:"#"},
-    {label: "Anchor 2", link:"#", icon: "fa-regular fa-star"},
-    {label: "", link:"#", icon: "fa-regular fa-heart"},
+    {label: "Anchor 2", link:"#", faIcon: {prefix: "regular", icon: "star"}},
+    {label: "", link:"#", faIcon: {prefix: "regular", icon: "heart"}},
     {label: null},
     {label: "Simple Label 1"},
-    {label: "Simple Label 2", icon: "fa-regular fa-moon"},
-    {label: "", icon: "fa-regular fa-sun"},
+    {label: "Simple Label 2", faIcon: {prefix: "regular", icon: "moon"}},
+    {label: "", faIcon: {prefix: "regular", icon: "sun"}},
     {label: null},
     {label: "Action 1", action: () => {alert('Action 1!');}},
-    {label: "Action 2", action: () => {alert('Action 2!');}, icon: "fa-regular fa-user"},
-    {label: "", action: () => {alert('Action 3!');}, icon: "fa-regular fa-face-smile"},
+    {label: "Action 2", action: () => {alert('Action 2!');}, faIcon: {prefix: "regular", icon: "user"}},
+    {label: "", action: () => {alert('Action 3!');}, faIcon: {prefix: "regular", icon: "face-smile"}}
 ];
 const showMenuOnHover = true;
-const btnIcon = 'fa-solid fa-bars';
+const btnFaIcon = {prefix: 'solid', icon: 'bars'};
 const btnLabel = 'MENU';
 
 // image carousel
@@ -31,9 +31,9 @@ function init(){
     const header = document.createElement('header');
     body.appendChild(header);
     
-    const dropDownMenu = new DropDownMenu(header,menuData,showMenuOnHover,btnIcon,btnLabel,'left');
-    const dropDownMenu2 = new DropDownMenu(header,menuData,showMenuOnHover,btnIcon,btnLabel,'center');
-    const dropDownMenu3 = new DropDownMenu(header,menuData,showMenuOnHover,btnIcon,btnLabel,'right');
+    const dropDownMenu = new DropDownMenu(header,menuData,showMenuOnHover,btnFaIcon,btnLabel,'left');
+    const dropDownMenu2 = new DropDownMenu(header,menuData,showMenuOnHover,btnFaIcon,btnLabel,'center');
+    const dropDownMenu3 = new DropDownMenu(header,menuData,showMenuOnHover,btnFaIcon,btnLabel,'right');
     header.style.display = 'flex';
     header.style.justifyContent = 'space-between';
     header.style.position = 'relative';

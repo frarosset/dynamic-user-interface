@@ -1,8 +1,5 @@
 import './ImageCarousel.css';
-// Font Awesome 5 (Free)
-import '@fortawesome/fontawesome-free/js/fontawesome';
-import '@fortawesome/fontawesome-free/js/solid';
-import '@fortawesome/fontawesome-free/js/regular';
+import {setFaIcon,changeFaIcon} from './fontAwesomeUtilities.js';
 
 export default class ImageCarousel{
     #imageCarouselDiv;
@@ -25,15 +22,13 @@ export default class ImageCarousel{
     #autoCycling;
     #inTransition;
 
-    #iconsData = {
-        navigationDotDataPrefix: 'fa-regular',
-        navigationDotDataPrefixCurrent: 'fa-solid',
-        navigationDotDataIcon: 'fa-circle',
-        previousData: 'fa-solid fa-chevron-left',
-        nextData: 'fa-solid fa-chevron-right',
-        cyclingButtonDataPrefix: 'fa-solid',
-        cyclingButtonDataIcon: 'fa-pause',
-        cyclingButtonDataIconStopped: 'fa-play'
+    #faIcons = {
+        navigationDot: {prefix: 'regular', icon: 'circle'},
+        currentNavigationDot: {prefix: 'solid', icon: 'circle'},
+        previousBtn: {prefix: 'solid', icon: 'chevron-left'},
+        nextBtn: {prefix: 'solid', icon: 'chevron-right'},
+        playCyclingBtn: {prefix: 'solid', icon: 'play'},
+        pauseCyclingBtn: {prefix: 'solid', icon: 'pause'},
     };
 
     constructor(parentDiv,imagesPaths,slideTimeoutInMs=5000, autoCycling=true){
@@ -148,7 +143,7 @@ export default class ImageCarousel{
     #initPreviousButton(){
         const previousButton = document.createElement('button');
         previousButton.classList.add('previous-button');
-        previousButton.innerHTML = this.#getIconHTML(this.#iconsData.previousData);
+        setFaIcon(previousButton,this.#faIcons.previousBtn);
         previousButton.addEventListener('click',() => {this.#previous();});
         return previousButton;
     }
@@ -156,7 +151,7 @@ export default class ImageCarousel{
     #initNextButton(){
         const nextButton = document.createElement('button');
         nextButton.classList.add('next-button');
-        nextButton.innerHTML = this.#getIconHTML(this.#iconsData.nextData);
+        setFaIcon(nextButton,this.#faIcons.nextBtn);
         nextButton.addEventListener('click',() => {this.#next();});
         return nextButton;
     }
@@ -165,18 +160,16 @@ export default class ImageCarousel{
         const navigationDiv = document.createElement('div');
         navigationDiv.classList.add('image-carousel-navigation');
 
-        let iconDataPrefix;
-        const iconDataIcon = this.#iconsData.navigationDotDataIcon;
-
         for (let i=0; i<this.#numOfImgs; i++){
             const slideDotButton = document.createElement('button');
             slideDotButton.classList.add('slide-dot-button');
 
+            let faIcon;
             if (i===this.#currentImgIdx)
-                iconDataPrefix = this.#iconsData.navigationDotDataPrefixCurrent;
+                faIcon = this.#faIcons.currentNavigationDot;
             else
-                iconDataPrefix = this.#iconsData.navigationDotDataPrefix;
-            slideDotButton.innerHTML = this.#getIconHTML(`${iconDataPrefix} ${iconDataIcon}`);
+                faIcon = this.#faIcons.navigationDot;
+            setFaIcon(slideDotButton,faIcon);
 
             slideDotButton.addEventListener('click',() => {
                 //this.#showSlide(i);
@@ -195,9 +188,8 @@ export default class ImageCarousel{
         // auto cycling disabled by default
         this.#autoCycling = autoCycling;
 
-        const iconDataIcon = autoCycling ? this.#iconsData.cyclingButtonDataIcon : this.#iconsData.cyclingButtonDataIconStopped;
-        const iconDataPrefix = this.#iconsData.cyclingButtonDataPrefix;
-        stopResumeCyclingButton.innerHTML = this.#getIconHTML(`${iconDataPrefix} ${iconDataIcon}`);
+        const faIcon = autoCycling ? this.#faIcons.pauseCyclingBtn : this.#faIcons.playCyclingBtn;
+        setFaIcon(stopResumeCyclingButton,faIcon);
 
         stopResumeCyclingButton.addEventListener('click',() => {this.#toggleAutoCycling();});
 
@@ -215,15 +207,15 @@ export default class ImageCarousel{
         this.#autoCycling = true; // set this first!
         this.#setSlideTimeout(); // this sets the timeout only if this.#autoCycling is true
 
-        const iconDataIcon = this.#iconsData.cyclingButtonDataIcon;
-        this.#changeIconHTML(this.#stopResumeCyclingButton.children[0],null,iconDataIcon);
+        const faIcon = this.#faIcons.pauseCyclingBtn;
+        changeFaIcon(this.#stopResumeCyclingButton,faIcon);
     }
     #cancelAutoCycling(){
         this.#cancelSlideTimeout(); // this sets the timeout only if this.#autoCycling is true
         this.#autoCycling = false; // // set this after!
 
-        const iconDataIcon = this.#iconsData.cyclingButtonDataIconStopped;
-        this.#changeIconHTML(this.#stopResumeCyclingButton.children[0],null,iconDataIcon);
+        const faIcon = this.#faIcons.playCyclingBtn;
+        changeFaIcon(this.#stopResumeCyclingButton,faIcon);
     }
 
     #initSlideTimeout(slideTimeoutInMs){
@@ -308,28 +300,18 @@ export default class ImageCarousel{
         this.#showSlide(this.#currentImgIdx + 1);
     }
 
-    #getIconHTML(icon){
-        return `<i class="${icon} fa-fw" aria-hidden="true"></i>`;
-    }
-    #changeIconHTML(iconHtml,dataPrefix=undefined,dataIcon=undefined){
-        if (dataPrefix)
-            iconHtml.setAttribute('data-prefix', dataPrefix);
-        if (dataIcon)
-            iconHtml.setAttribute('data-icon', dataIcon.slice(3));
-    }
-
     #getSlideDot(imgIdx){
-        return this.#navigationDiv.children[imgIdx].children[0];
+        return this.#navigationDiv.children[imgIdx];
     }
     #selectCurrentSlideIcon(){
         const currentSlideDot = this.#getSlideDot(this.#currentImgIdx);
-        const iconDataPrefix = this.#iconsData.navigationDotDataPrefixCurrent; 
-        this.#changeIconHTML(currentSlideDot,iconDataPrefix);
+        const faIcon = this.#faIcons.currentNavigationDot; 
+        changeFaIcon(currentSlideDot,faIcon);
     }
     #unselectCurrentSlideIcon(){
         const currentSlideDot = this.#getSlideDot(this.#currentImgIdx);
-        const iconDataPrefix = this.#iconsData.navigationDotDataPrefix;
-        this.#changeIconHTML(currentSlideDot,iconDataPrefix);
+        const faIcon = this.#faIcons.navigationDot; 
+        changeFaIcon(currentSlideDot,faIcon);
     }
    
     #selectCurrentSlideImg(){
