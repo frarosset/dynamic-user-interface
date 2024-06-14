@@ -38,7 +38,7 @@
     height: 100%;
     display: flex;
     position: relative;
-    transition: left ease-in-out var(--slide-duration);
+    transition: transform ease-in-out var(--slide-duration);
 }
 
 .image-carousel-slides.suspend-transition{

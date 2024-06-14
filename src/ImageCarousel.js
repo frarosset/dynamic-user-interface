@@ -236,7 +236,8 @@ export default class ImageCarousel{
 
     #setImagesDivLeft(idxForLeft){
         this.#idxForLeft =  idxForLeft; 
-        this.#imagesDiv.style.left = `-${idxForLeft*100}%`;
+        //this.#imagesDiv.style.left = `-${idxForLeft*100}%`;
+        this.#imagesDiv.style.transform = `translateX(-${idxForLeft*100}%)`;
     }
 
     #getIdxForLeft(imgIdx){
