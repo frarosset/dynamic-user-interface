@@ -1,11 +1,13 @@
 import './ImageCarousel.css';
-import {setFaIcon,changeFaIcon} from './fontAwesomeUtilities.js';
+import {changeFaIcon} from './fontAwesomeUtilities.js';
+import {initDiv, initImg, initButton} from './commonDomComponents.js';
+import {triggerReflow,initHorizontalSwipeDetection} from './commonDomUtilities.js';
 
 export default class ImageCarousel{
     #imageCarouselDiv;
     #imagesDiv;
     #navigationDiv;
-    #stopResumeCyclingButton;
+    #autoCyclingButton;
 
     #numOfImgs;
     #idxOfFirstImg;
@@ -32,23 +34,24 @@ export default class ImageCarousel{
     };
 
     constructor(parentDiv,imagesPaths,slideTimeoutInMs=5000, autoCycling=true){
-        this.#imageCarouselDiv = document.createElement('div');
-        this.#imageCarouselDiv.classList.add('image-carousel');
+        this.#imageCarouselDiv = initDiv('image-carousel');
 
         // add frame div with images
         this.#imageCarouselDiv.appendChild(this.#initFrameDivWithImages(imagesPaths));
 
         // add interface (previous and next buttons)
-        this.#imageCarouselDiv.appendChild(this.#initPreviousButton());
-        this.#imageCarouselDiv.appendChild(this.#initNextButton());
+        const previousButton = initButton('previous-button', () => {this.#previous();}, this.#faIcons.previousBtn);
+        this.#imageCarouselDiv.appendChild(previousButton);
+        const nextButton = initButton('next-button', () => {this.#next();}, this.#faIcons.nextBtn);
+        this.#imageCarouselDiv.appendChild(nextButton);
 
         // add interface (previous and next buttons)
         this.#navigationDiv = this.#initNavigationDiv();
         this.#imageCarouselDiv.appendChild(this.#navigationDiv);
 
         // add stop/resume auto cycling of slide transition
-        this.#stopResumeCyclingButton = this.#initStopResumeAutoCyclingButton(autoCycling);
-        this.#imageCarouselDiv.appendChild(this.#stopResumeCyclingButton);
+        this.#autoCyclingButton = this.#initStopResumeAutoCyclingButton(autoCycling);
+        this.#imageCarouselDiv.appendChild(this.#autoCyclingButton);
 
         parentDiv.appendChild(this.#imageCarouselDiv);
 
@@ -60,8 +63,7 @@ export default class ImageCarousel{
     }
 
     #initFrameDivWithImages(imagesPaths){
-        this.#imagesDiv = document.createElement('div');
-        this.#imagesDiv.classList.add('image-carousel-slides');
+        this.#imagesDiv = initDiv('image-carousel-slides');
 
         // append first image at the end (but don't count it in the #numOfImages),
         // as well as prepend the last image at the beginning
@@ -70,8 +72,7 @@ export default class ImageCarousel{
         // this will be used to make a seamless transition N -> 1 or 1 -> N (see below)
         this.#numOfImgs = imagesPaths.length;
         [imagesPaths[this.#numOfImgs-1],...imagesPaths,imagesPaths[0]].forEach(imgPath => {
-            const img = document.createElement('img');
-            img.setAttribute('src',imgPath);
+            const img = initImg('', imgPath, 'A slide of the image carousel.')
             this.#imagesDiv.appendChild(img);
         });
         this.#idxOfFirstImg = 1; // index of [1] (in this.#imagesDiv)
@@ -79,8 +80,7 @@ export default class ImageCarousel{
         this.#idxOfAppendedFirstImg = this.#idxOfLastImg + 1; // index of [1']
         this.#idxOfPrependedLastImg = this.#idxOfFirstImg - 1; // index of [N']
 
-        const frameDiv = document.createElement('div');
-        frameDiv.classList.add('image-carousel-frame');
+        const frameDiv = initDiv('image-carousel-frame');
         frameDiv.appendChild(this.#imagesDiv);
 
         // when you do the slide transition N -> 1, first do
@@ -106,94 +106,43 @@ export default class ImageCarousel{
             this.#inTransition=false;
         });
 
-        this.#initHorizontalSwipeDetection(frameDiv,this.#next.bind(this),this.#previous.bind(this));
+        initHorizontalSwipeDetection(frameDiv,this.#next.bind(this),this.#previous.bind(this));
 
         // initialize the first image shown
         this.#setCurrentImgData(0);
         
         return frameDiv;
     }
-
     
-    #initHorizontalSwipeDetection(element,callbackLeft=()=>{},callbackRight=()=>{}){
-        let xTouchStart;
-
-        element.addEventListener("contextmenu", (e) => {
-            e.preventDefault();
-        });
-
-        // based on https://stackoverflow.com/questions/2264072/detect-a-finger-swipe-through-javascript-on-the-iphone-and-android
-        element.addEventListener('touchstart' , (e)=>{
-            xTouchStart = e.changedTouches[0].screenX;
-        });
-
-        element.addEventListener('touchend' , (e)=>{
-            let xTouchEnd = e.changedTouches[0].screenX;
-            const sensitivityInPixel = 10;
-            let delta = xTouchEnd - xTouchStart;
-
-            if(delta  > sensitivityInPixel){
-               callbackRight();
-            } else if (delta < -sensitivityInPixel) {
-                callbackLeft();
-            }
-        });
-    }
-
-    #initPreviousButton(){
-        const previousButton = document.createElement('button');
-        previousButton.classList.add('previous-button');
-        setFaIcon(previousButton,this.#faIcons.previousBtn);
-        previousButton.addEventListener('click',() => {this.#previous();});
-        return previousButton;
-    }
-
-    #initNextButton(){
-        const nextButton = document.createElement('button');
-        nextButton.classList.add('next-button');
-        setFaIcon(nextButton,this.#faIcons.nextBtn);
-        nextButton.addEventListener('click',() => {this.#next();});
-        return nextButton;
-    }
-
     #initNavigationDiv(){
-        const navigationDiv = document.createElement('div');
-        navigationDiv.classList.add('image-carousel-navigation');
+        const navigationDiv = initDiv('image-carousel-navigation');
+
+        const getFaIcon = (i) => {
+            return i===this.#currentImgIdx ? this.#faIcons.currentNavigationDot : this.#faIcons.navigationDot; 
+        };
 
         for (let i=0; i<this.#numOfImgs; i++){
-            const slideDotButton = document.createElement('button');
-            slideDotButton.classList.add('slide-dot-button');
-
-            let faIcon;
-            if (i===this.#currentImgIdx)
-                faIcon = this.#faIcons.currentNavigationDot;
-            else
-                faIcon = this.#faIcons.navigationDot;
-            setFaIcon(slideDotButton,faIcon);
-
-            slideDotButton.addEventListener('click',() => {
-                //this.#showSlide(i);
-                // this.#imagesDiv.style.left = `-${idx*100}%`;
+            const slideDotButton = initButton('slide-dot-button', () => {
                 this.#suspendTransitionToCall(() => {this.#showSlide(i);this.#inTransition=false;})
-            });
+            }, getFaIcon(i));
+
             navigationDiv.appendChild(slideDotButton);
         }
+
         return navigationDiv;
     }
 
     #initStopResumeAutoCyclingButton(autoCycling){
-        const stopResumeCyclingButton = document.createElement('button');
-        stopResumeCyclingButton.classList.add('stop-resume-cycling-button');
+        const getFaIcon = () => {
+            return autoCycling ? this.#faIcons.pauseCyclingBtn : this.#faIcons.playCyclingBtn; 
+        };
+
+        const autoCyclingButton = initButton('auto-cycling-button', () => {this.#toggleAutoCycling();}, getFaIcon());
 
         // auto cycling disabled by default
         this.#autoCycling = autoCycling;
 
-        const faIcon = autoCycling ? this.#faIcons.pauseCyclingBtn : this.#faIcons.playCyclingBtn;
-        setFaIcon(stopResumeCyclingButton,faIcon);
-
-        stopResumeCyclingButton.addEventListener('click',() => {this.#toggleAutoCycling();});
-
-        return stopResumeCyclingButton;
+        return autoCyclingButton;
     }
 
     #toggleAutoCycling(){
@@ -208,14 +157,14 @@ export default class ImageCarousel{
         this.#setSlideTimeout(); // this sets the timeout only if this.#autoCycling is true
 
         const faIcon = this.#faIcons.pauseCyclingBtn;
-        changeFaIcon(this.#stopResumeCyclingButton,faIcon);
+        changeFaIcon(this.#autoCyclingButton,faIcon);
     }
     #cancelAutoCycling(){
         this.#cancelSlideTimeout(); // this sets the timeout only if this.#autoCycling is true
         this.#autoCycling = false; // // set this after!
 
         const faIcon = this.#faIcons.playCyclingBtn;
-        changeFaIcon(this.#stopResumeCyclingButton,faIcon);
+        changeFaIcon(this.#autoCyclingButton,faIcon);
     }
 
     #initSlideTimeout(slideTimeoutInMs){
@@ -334,16 +283,12 @@ export default class ImageCarousel{
     #suspendTransitionToCall(callback){
         this.#imagesDiv.classList.add('suspend-transition');
         // trigger a reflow to be sure the above class is applied
-        this.#triggerReflow(this.#imagesDiv); 
+        triggerReflow(this.#imagesDiv); 
         
         callback();
         // trigger a reflow to be sure any operation on this.#imagesDiv is applied    
-        this.#triggerReflow(this.#imagesDiv); 
+        triggerReflow(this.#imagesDiv); 
         
         this.#imagesDiv.classList.remove('suspend-transition');
-    }
-
-    #triggerReflow(element){
-        element.offsetTop;
     }
 }

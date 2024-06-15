@@ -12,8 +12,8 @@
     --navigation-icon-padding: 8px;
     --navigation-icon-size: 8px;
 
-    /* stop-resume-cycling-button shares some properties with the navigation menu */
-    --stop-resume-cycling-button-icon-size: 20px; 
+    /* auto-cycling-button shares some properties with the navigation menu */
+    --auto-cycling-button-icon-size: 20px; 
 
     --frame-bg-col: white;
     --non-current-img-opacity: 40%;
@@ -98,16 +98,16 @@
     bottom: var(--navigation-padding); /* 0% + var(--navigation-padding);*/
 }
 
-.image-carousel .stop-resume-cycling-button{
+.image-carousel .auto-cycling-button{
     position: absolute;
     z-index: 1;
     right: var(--navigation-padding);
     top: var(--navigation-padding);
-    font-size: var(--stop-resume-cycling-button-icon-size) !important;
+    font-size: var(--auto-cycling-button-icon-size) !important;
 }
 
 .image-carousel .image-carousel-navigation .slide-dot-button,
-.image-carousel .stop-resume-cycling-button{
+.image-carousel .auto-cycling-button{
     background-color: transparent;
     border: none;
     color: var(--navigation-color);

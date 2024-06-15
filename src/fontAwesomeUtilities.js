@@ -8,7 +8,7 @@ export function getFaIconHTML(faIcon, fullWidth = true){
     return `<i class="fa-${faIcon.prefix} fa-${faIcon.icon} ${fullWidth ? 'fa-fw' : ''}" aria-hidden="true"></i>`;
 }
 
-export function setFaIconAndLabel(element,faIcon,label){
+export function setFaIconAndLabel(element,faIcon,label=''){
     if (faIcon){
         element.innerHTML = `${getFaIconHTML(faIcon)}${label}`;
     } else {
