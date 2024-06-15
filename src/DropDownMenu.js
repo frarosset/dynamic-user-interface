@@ -10,7 +10,7 @@ export default class DropDownMenu{
         if (contentPosition !== 'left' && contentPosition !== 'right')
             contentPosition = 'center';
         this.#dropDownDiv = initDiv(['drop-down-menu', `content-align-${contentPosition}`]);
-        this.#button = initButton('drop-down-button', () => {this.toggleForcedVisibility();}, btnFaIcon, btnLabel);
+        this.#button = initButton('drop-down-button', this.#buttonClickCallback, btnFaIcon, btnLabel);
         let contentCnt = initDiv('drop-down-content-cnt');
         this.#content = initUl('drop-down-content');
 
@@ -23,19 +23,10 @@ export default class DropDownMenu{
         this.#dropDownDiv.appendChild(contentCnt);
         parentDiv.appendChild(this.#dropDownDiv);
 
-        this.#content.addEventListener('click', () => {
-            this.toggleForcedVisibility(false);
-            this.toggleVisibility(false);
-        });
+        this.#content.addEventListener('click', this.#contentClickCallback);
         if (enableHover){
-            this.#button.addEventListener('pointerenter', (e) => {
-                if (e.pointerType === "mouse")
-                    this.toggleVisibility(true);
-            });
-            this.#dropDownDiv.addEventListener('pointerleave', (e) => {
-                if (e.pointerType === "mouse")
-                    this.toggleVisibility(false);
-            });
+            this.#button.addEventListener('pointerenter', this.#buttonPointerEnterCallback);
+            this.#dropDownDiv.addEventListener('pointerleave', this.#buttonPointerLeaveCallback);
         }
     }
 
@@ -71,4 +62,22 @@ export default class DropDownMenu{
     toggleForcedVisibility(condition=undefined){
         this.#dropDownDiv.classList.toggle('visible-forced',condition);
     }
+ 
+    // Event listeners callbacks ----------------------------------------------
+    // see https://alephnode.io/07-event-handler-binding/
+    #buttonClickCallback = () => {
+        this.toggleForcedVisibility();
+    };
+    #buttonPointerEnterCallback = (e) => {
+        if (e.pointerType === "mouse")
+            this.toggleVisibility(true);
+    };
+    #buttonPointerLeaveCallback = (e) => {
+        if (e.pointerType === "mouse")
+            this.toggleVisibility(false);
+    };
+    #contentClickCallback = () => {
+        this.toggleForcedVisibility(false);
+        this.toggleVisibility(false);
+    };
 }

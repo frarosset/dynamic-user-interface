@@ -1,5 +1,7 @@
 import {setFaIconAndLabel} from './fontAwesomeUtilities.js';
 
+// For passing methods as callbacks, see: https://alephnode.io/07-event-handler-binding/
+
 export function initDiv(className=null){
     const element = document.createElement('div');
     applyClass(element, className);

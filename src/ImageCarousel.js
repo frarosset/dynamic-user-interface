@@ -40,9 +40,9 @@ export default class ImageCarousel{
         this.#imageCarouselDiv.appendChild(this.#initFrameDivWithImages(imagesPaths));
 
         // add interface (previous and next buttons)
-        const previousButton = initButton('previous-button', () => {this.#previous();}, this.#faIcons.previousBtn);
+        const previousButton = initButton('previous-button', this.#previousButtonClickCallback, this.#faIcons.previousBtn);
         this.#imageCarouselDiv.appendChild(previousButton);
-        const nextButton = initButton('next-button', () => {this.#next();}, this.#faIcons.nextBtn);
+        const nextButton = initButton('next-button', this.#nextButtonClickCallback, this.#faIcons.nextBtn);
         this.#imageCarouselDiv.appendChild(nextButton);
 
         // add interface (previous and next buttons)
@@ -90,23 +90,10 @@ export default class ImageCarousel{
         // [1'] -> [1] transition instantaneously
         // (to do this, just just have to update the left property of this.#imagesDiv)
         // Similar considerations can be made for the 1->N transition
-        this.#imagesDiv.addEventListener('transitionend' , ()=>{
-            if (this.#idxForLeft === this.#idxOfAppendedFirstImg){
-                // transition [N] -> [1'] has just ended, so go to [1] without transition
-                this.#suspendTransitionToCall(() => {
-                    this.#setImagesDivLeft(this.#idxOfFirstImg);
-                });
-            } else if (this.#idxForLeft === this.#idxOfPrependedLastImg){
-                // transition [1] -> [N'] has just ended, so go to [N] without transition
-                this.#suspendTransitionToCall(() => {
-                    this.#setImagesDivLeft(this.#idxOfLastImg);
-                });
-            }
+        this.#imagesDiv.addEventListener('transitionend' , this.#imageDivTransitionendCallback);
 
-            this.#inTransition=false;
-        });
-
-        initHorizontalSwipeDetection(frameDiv,this.#next.bind(this),this.#previous.bind(this));
+        // simulate next/previous clicks with swipes
+        initHorizontalSwipeDetection(frameDiv,this.#nextButtonClickCallback,this.#previousButtonClickCallback);
 
         // initialize the first image shown
         this.#setCurrentImgData(0);
@@ -122,10 +109,8 @@ export default class ImageCarousel{
         };
 
         for (let i=0; i<this.#numOfImgs; i++){
-            const slideDotButton = initButton('slide-dot-button', () => {
-                this.#suspendTransitionToCall(() => {this.#showSlide(i);this.#inTransition=false;})
-            }, getFaIcon(i));
-
+            const slideDotButton = initButton('slide-dot-button', this.#slideDotButtonClickCallback, getFaIcon(i));
+            slideDotButton.i = i;
             navigationDiv.appendChild(slideDotButton);
         }
 
@@ -137,7 +122,7 @@ export default class ImageCarousel{
             return autoCycling ? this.#faIcons.pauseCyclingBtn : this.#faIcons.playCyclingBtn; 
         };
 
-        const autoCyclingButton = initButton('auto-cycling-button', () => {this.#toggleAutoCycling();}, getFaIcon());
+        const autoCyclingButton = initButton('auto-cycling-button', this.#autoCyclingButtonClickCallback, getFaIcon());
 
         // auto cycling disabled by default
         this.#autoCycling = autoCycling;
@@ -174,20 +159,13 @@ export default class ImageCarousel{
         // - it saves resources when the page is not visible.
         // - it solves a bug where the navigation dots were not properly updated when the page 
         //   was not visible but the cycling was active.
-        document.addEventListener("visibilitychange", () => {
-            if (this.#autoCycling){
-                if (document.visibilityState === "visible") {
-                    this.#setSlideTimeout();
-                } else { //document.visibilityState` === "hidden"
-                    this.#cancelSlideTimeout();
-                }
-            }
-        });
+        document.addEventListener("visibilitychange", this.#documentVisibilitychangeCallback);
     }
 
     #setSlideTimeout(){
         if (this.#autoCycling){
-            this.#slideTimeoutObj = setTimeout(() => {this.#next();}, this.#slideTimeoutInMs);
+            // simulate a #nextButton click
+            this.#slideTimeoutObj = setTimeout(this.#nextButtonClickCallback, this.#slideTimeoutInMs);
         }
     }
     #cancelSlideTimeout(){
@@ -291,4 +269,46 @@ export default class ImageCarousel{
         
         this.#imagesDiv.classList.remove('suspend-transition');
     }
+
+// Event listeners callbacks ----------------------------------------------
+    // see https://alephnode.io/07-event-handler-binding/
+    #previousButtonClickCallback = () => {
+        this.#previous();
+    };
+    #nextButtonClickCallback = () => {
+        this.#next();
+    };
+    #slideDotButtonClickCallback = (e) => {
+        this.#suspendTransitionToCall(() => {
+            this.#showSlide(e.currentTarget.i); // currentTarget: element that the event listener is attached to
+            this.#inTransition=false;
+        });
+    };
+    #autoCyclingButtonClickCallback = () => {
+        this.#toggleAutoCycling();
+    };
+    #documentVisibilitychangeCallback = () => {
+        if (this.#autoCycling){
+            if (document.visibilityState === "visible") {
+                this.#setSlideTimeout();
+            } else { //document.visibilityState` === "hidden"
+                this.#cancelSlideTimeout();
+            }
+        }
+    };
+    #imageDivTransitionendCallback = ()=>{
+        // in this.#imagesDiv you have: [N'],[1],[2],[3],...,[N],[1']
+        if (this.#idxForLeft === this.#idxOfAppendedFirstImg){
+            // transition [N] -> [1'] has just ended, so go to [1] without transition
+            this.#suspendTransitionToCall(() => {
+                this.#setImagesDivLeft(this.#idxOfFirstImg);
+            });
+        } else if (this.#idxForLeft === this.#idxOfPrependedLastImg){
+            // transition [1] -> [N'] has just ended, so go to [N] without transition
+            this.#suspendTransitionToCall(() => {
+                this.#setImagesDivLeft(this.#idxOfLastImg);
+            });
+        }
+        this.#inTransition=false;
+    };
 }
