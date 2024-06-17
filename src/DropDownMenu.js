@@ -1,5 +1,6 @@
 import './DropDownMenu.css';
 import {initDiv, initP, initButton, initA, initLi, initUl, initHr} from './commonDomComponents.js';
+import {changeFaIcon} from './fontAwesomeUtilities.js';
 
 let blockName = 'drop-down-menu'; // ddm = drop-down-menu
 
@@ -8,6 +9,11 @@ export default class DropDownMenu{
     #button;
     #content;
     #contentCnt;
+
+    #buttonFaIcons = {
+        normal: {prefix: 'solid', icon: 'bars'},
+        forced: {prefix: 'solid', icon: 'xmark'}
+    };
 
     constructor(parentDiv, menuData, enableHover=false, btnFaIcon = {prefix: 'solid', icon: 'bars'}, btnLabel='', contentPosition){
         if (contentPosition !== 'left' && contentPosition !== 'right')
@@ -59,7 +65,15 @@ export default class DropDownMenu{
     }
 
     toggleForcedVisibility(condition=undefined){
-        this.#contentCnt.classList.toggle(`${blockName}__content-container--visible-forced`,condition);
+        const cssClass = `${blockName}__content-container--visible-forced`;
+        this.#contentCnt.classList.toggle(cssClass,condition);
+        if (this.#contentCnt.classList.contains(cssClass)){
+            if (this.#buttonFaIcons.forced)
+                changeFaIcon(this.#button, this.#buttonFaIcons.forced);
+        } else {
+            if (this.#buttonFaIcons.normal)
+                changeFaIcon(this.#button, this.#buttonFaIcons.normal);
+        }
     }
  
     // Event listeners callbacks ----------------------------------------------
