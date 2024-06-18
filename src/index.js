@@ -1,3 +1,4 @@
+import './index.css';
 import DropDownMenu from './DropDownMenu.js';
 import ImageCarousel from './ImageCarousel.js';
 
@@ -17,7 +18,6 @@ const menuData = [
 ];
 const showMenuOnHover = true;
 const btnFaIcon = {prefix: 'solid', icon: 'bars'};
-const btnLabel = 'MENU';
 
 // image carousel
 const imageWidth = 1600;
@@ -31,25 +31,14 @@ function init(){
     const header = document.createElement('header');
     body.appendChild(header);
     
-    const dropDownMenu = new DropDownMenu(header,menuData,showMenuOnHover,btnFaIcon,btnLabel,'left');
-    const dropDownMenu2 = new DropDownMenu(header,menuData,showMenuOnHover,btnFaIcon,btnLabel,'center');
-    const dropDownMenu3 = new DropDownMenu(header,menuData,showMenuOnHover,btnFaIcon,btnLabel,'right');
-    header.style.display = 'flex';
-    header.style.justifyContent = 'space-between';
-    header.style.position = 'relative';
-    header.style.zIndex = '100';
-
-    // add an horizonatal line, just for testing purposes
-    const separator = document.createElement('hr');
-    body.appendChild(separator);
+    const dropDownMenu = new DropDownMenu(header,menuData,showMenuOnHover,btnFaIcon,'LEFT','left');
+    const dropDownMenu2 = new DropDownMenu(header,menuData,showMenuOnHover,btnFaIcon,'CENTER','center');
+    const dropDownMenu3 = new DropDownMenu(header,menuData,showMenuOnHover,btnFaIcon,'RIGHT','right');
 
     const main = document.createElement('main');
     body.appendChild(main);
 
     const imageCarousel = new ImageCarousel(main,imagesPaths);
-    main.style.margin = 'auto';
-    main.style.width = '80vw';
-    main.style.height = '80vh';
 }
 
 init();
