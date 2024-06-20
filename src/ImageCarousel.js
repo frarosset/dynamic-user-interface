@@ -3,6 +3,27 @@ import {changeChildFaIcon} from './fontAwesomeUtilities.js';
 import {initDiv, initImg, initButton} from './commonDomComponents.js';
 import {triggerReflow,initHorizontalSwipeDetection} from './commonDomUtilities.js';
 
+
+
+
+const blockName = 'image-carousel';
+const cssClass = {
+    imageCarouselDiv: blockName,
+    frame: `${blockName}__frame`,
+    slides: `${blockName}__slides`,
+    img: `${blockName}__img`,
+    previousButton: `${blockName}__previous-button`,
+    nextButton: `${blockName}__next-button`,
+    navigation: `${blockName}__navigation`,
+    autoCyclingButton: `${blockName}__auto-cycling-button`,
+    slideDotButton: `${blockName}__img-button`,
+}
+cssClass.slidesTransitionOff = `${cssClass.slides}--transition-off`;
+cssClass.imgCurrent = `${cssClass.img}--current`;
+cssClass.slideDotButtonCurrent = `${cssClass.slideDotButton}--current`;
+
+
+
 export default class ImageCarousel{
     #imageCarouselDiv;
     #imagesDiv;
@@ -34,15 +55,15 @@ export default class ImageCarousel{
     };
 
     constructor(parentDiv,imagesPaths,slideTimeoutInMs=5000, autoCycling=true){
-        this.#imageCarouselDiv = initDiv('image-carousel');
+        this.#imageCarouselDiv = initDiv(cssClass.imageCarouselDiv);
 
         // add frame div with images
         this.#imageCarouselDiv.appendChild(this.#initFrameDivWithImages(imagesPaths));
 
         // add interface (previous and next buttons)
-        const previousButton = initButton('previous-button', this.#previousButtonClickCallback, this.#faIcons.previousBtn);
+        const previousButton = initButton(cssClass.previousButton, this.#previousButtonClickCallback, this.#faIcons.previousBtn);
         this.#imageCarouselDiv.appendChild(previousButton);
-        const nextButton = initButton('next-button', this.#nextButtonClickCallback, this.#faIcons.nextBtn);
+        const nextButton = initButton(cssClass.nextButton, this.#nextButtonClickCallback, this.#faIcons.nextBtn);
         this.#imageCarouselDiv.appendChild(nextButton);
 
         // add interface (previous and next buttons)
@@ -63,7 +84,7 @@ export default class ImageCarousel{
     }
 
     #initFrameDivWithImages(imagesPaths){
-        this.#imagesDiv = initDiv('image-carousel-slides');
+        this.#imagesDiv = initDiv(cssClass.slides);
 
         // append first image at the end (but don't count it in the #numOfImages),
         // as well as prepend the last image at the beginning
@@ -71,8 +92,8 @@ export default class ImageCarousel{
         // [N'],[1],[2],[3],...,[N],[1']
         // this will be used to make a seamless transition N -> 1 or 1 -> N (see below)
         this.#numOfImgs = imagesPaths.length;
-        [imagesPaths[this.#numOfImgs-1],...imagesPaths,imagesPaths[0]].forEach(imgPath => {
-            const img = initImg('', imgPath, 'A slide of the image carousel.')
+        [imagesPaths[this.#numOfImgs-1],...imagesPaths,imagesPaths[0]].forEach((imgPath,i) => {
+            const img = initImg(cssClass.img, imgPath, 'A slide of the image carousel.')
             this.#imagesDiv.appendChild(img);
         });
         this.#idxOfFirstImg = 1; // index of [1] (in this.#imagesDiv)
@@ -80,7 +101,7 @@ export default class ImageCarousel{
         this.#idxOfAppendedFirstImg = this.#idxOfLastImg + 1; // index of [1']
         this.#idxOfPrependedLastImg = this.#idxOfFirstImg - 1; // index of [N']
 
-        const frameDiv = initDiv('image-carousel-frame');
+        const frameDiv = initDiv(cssClass.frame);
         frameDiv.appendChild(this.#imagesDiv);
 
         // when you do the slide transition N -> 1, first do
@@ -102,14 +123,14 @@ export default class ImageCarousel{
     }
     
     #initNavigationDiv(){
-        const navigationDiv = initDiv('image-carousel-navigation');
+        const navigationDiv = initDiv(cssClass.navigation);
 
         const getFaIcon = (i) => {
             return i===this.#currentImgIdx ? this.#faIcons.currentNavigationDot : this.#faIcons.navigationDot; 
         };
 
         for (let i=0; i<this.#numOfImgs; i++){
-            const slideDotButton = initButton('slide-dot-button', this.#slideDotButtonClickCallback, getFaIcon(i));
+            const slideDotButton = initButton(cssClass.slideDotButton, this.#slideDotButtonClickCallback, getFaIcon(i));
             slideDotButton.i = i;
             navigationDiv.appendChild(slideDotButton);
         }
@@ -122,7 +143,7 @@ export default class ImageCarousel{
             return autoCycling ? this.#faIcons.pauseCyclingBtn : this.#faIcons.playCyclingBtn; 
         };
 
-        const autoCyclingButton = initButton('auto-cycling-button', this.#autoCyclingButtonClickCallback, getFaIcon());
+        const autoCyclingButton = initButton(cssClass.autoCyclingButton, this.#autoCyclingButtonClickCallback, getFaIcon());
 
         // auto cycling disabled by default
         this.#autoCycling = autoCycling;
@@ -232,34 +253,36 @@ export default class ImageCarousel{
     }
     #selectCurrentSlideIcon(){
         const currentSlideDot = this.#getSlideDot(this.#currentImgIdx);
+        currentSlideDot.classList.add(cssClass.slideDotButtonCurrent);
         const faIcon = this.#faIcons.currentNavigationDot; 
         changeChildFaIcon(currentSlideDot,faIcon);
     }
     #unselectCurrentSlideIcon(){
         const currentSlideDot = this.#getSlideDot(this.#currentImgIdx);
+        currentSlideDot.classList.remove(cssClass.slideDotButtonCurrent);
         const faIcon = this.#faIcons.navigationDot; 
         changeChildFaIcon(currentSlideDot,faIcon);
     }
    
     #selectCurrentSlideImg(){
-        this.#imagesDiv.children[this.#idxForLeft].classList.add('current');
+        this.#imagesDiv.children[this.#idxForLeft].classList.add(cssClass.imgCurrent);
         if (this.#idxForLeft===this.#idxOfAppendedFirstImg){
-            this.#imagesDiv.children[this.#idxOfFirstImg].classList.add('current');
+            this.#imagesDiv.children[this.#idxOfFirstImg].classList.add(cssClass.imgCurrent);
         } else if (this.#idxForLeft===this.#idxOfPrependedLastImg){
-            this.#imagesDiv.children[this.#idxOfLastImg].classList.add('current');
+            this.#imagesDiv.children[this.#idxOfLastImg].classList.add(cssClass.imgCurrent);
         }
     }
     #unselectCurrentSlideImg(){
-        this.#imagesDiv.children[this.#idxForLeft].classList.remove('current');
+        this.#imagesDiv.children[this.#idxForLeft].classList.remove(cssClass.imgCurrent);
         if (this.#idxForLeft===this.#idxOfFirstImg){
-            this.#imagesDiv.children[this.#idxOfAppendedFirstImg].classList.remove('current');
+            this.#imagesDiv.children[this.#idxOfAppendedFirstImg].classList.remove(cssClass.imgCurrent);
         } else if (this.#idxForLeft===this.#idxOfLastImg){
-            this.#imagesDiv.children[this.#idxOfPrependedLastImg].classList.remove('current');
+            this.#imagesDiv.children[this.#idxOfPrependedLastImg].classList.remove(cssClass.imgCurrent);
         }
     }
 
     #suspendTransitionToCall(callback){
-        this.#imagesDiv.classList.add('suspend-transition');
+        this.#imagesDiv.classList.add(cssClass.slidesTransitionOff);
         // trigger a reflow to be sure the above class is applied
         triggerReflow(this.#imagesDiv); 
         
@@ -267,10 +290,10 @@ export default class ImageCarousel{
         // trigger a reflow to be sure any operation on this.#imagesDiv is applied    
         triggerReflow(this.#imagesDiv); 
         
-        this.#imagesDiv.classList.remove('suspend-transition');
+        this.#imagesDiv.classList.remove(cssClass.slidesTransitionOff);
     }
 
-// Event listeners callbacks ----------------------------------------------
+    // Event listeners callbacks ----------------------------------------------
     // see https://alephnode.io/07-event-handler-binding/
     #previousButtonClickCallback = () => {
         this.#previous();

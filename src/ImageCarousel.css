@@ -32,24 +32,24 @@
     box-sizing: border-box;
 }
 
-.image-carousel-frame{
+.image-carousel__frame{
     overflow: hidden;
     height: 100%; 
     background-color: var(--frame-bg-col);
 }
 
-.image-carousel-slides{
+.image-carousel__slides{
     height: 100%;
     display: flex;
     position: relative;
     transition: transform ease-in-out var(--slide-duration);
 }
 
-.image-carousel-slides.suspend-transition{
+.image-carousel__slides--transition-off{
     transition: none !important;
 }
 
-.image-carousel img{
+.image-carousel__img{
     max-width: 100%;
     min-width: 100%;
     height: 100%;
@@ -59,12 +59,12 @@
     transition: opacity ease-in-out var(--slide-duration);
 }
 
-.image-carousel img.current{
+.image-carousel__img--current{
     opacity: 100%;
 }
 
-.image-carousel button.previous-button,
-.image-carousel button.next-button{
+.image-carousel__previous-button,
+.image-carousel__next-button{
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
@@ -79,14 +79,14 @@
     justify-content: center;
     align-items: center;
 }
-.image-carousel button.previous-button{
+.image-carousel__previous-button{
     left: var(--prev-next-padding); /* 0% + var(--prev-next-padding);*/
 }
-.image-carousel button.next-button{
+.image-carousel__next-button{
     right: var(--prev-next-padding); /* 0% + var(--prev-next-padding);*/
 }
 
-.image-carousel .image-carousel-navigation{
+.image-carousel__navigation{
     position: absolute;
     width: 90%;
     display: flex;
@@ -98,7 +98,7 @@
     bottom: var(--navigation-padding); /* 0% + var(--navigation-padding);*/
 }
 
-.image-carousel .auto-cycling-button{
+.image-carousel__auto-cycling-button{
     position: absolute;
     z-index: 1;
     right: var(--navigation-padding);
@@ -106,8 +106,8 @@
     font-size: var(--auto-cycling-button-icon-size) !important;
 }
 
-.image-carousel .image-carousel-navigation .slide-dot-button,
-.image-carousel .auto-cycling-button{
+.image-carousel__img-button,
+.image-carousel__auto-cycling-button{
     background-color: transparent;
     border: none;
     color: var(--navigation-color);
