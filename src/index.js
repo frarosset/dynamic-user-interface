@@ -31,9 +31,12 @@ function init(){
     const header = document.createElement('header');
     body.appendChild(header);
     
-    const dropDownMenu = new DropDownMenu(header,menuData,showMenuOnHover,btnFaIcon,'LEFT','left');
-    const dropDownMenu2 = new DropDownMenu(header,menuData,showMenuOnHover,btnFaIcon,'CENTER','center');
-    const dropDownMenu3 = new DropDownMenu(header,menuData,showMenuOnHover,btnFaIcon,'RIGHT','right');
+    const dropDownMenuL = new DropDownMenu(header,menuData,showMenuOnHover,btnFaIcon,'LEFT','left');
+    dropDownMenuL.getElement().classList.add('ddm-left');
+    const dropDownMenuC = new DropDownMenu(header,menuData,showMenuOnHover,btnFaIcon,'CENTER','center');
+    dropDownMenuC.getElement().classList.add('ddm-center');
+    const dropDownMenuR = new DropDownMenu(header,menuData,showMenuOnHover,btnFaIcon,'RIGHT','right');
+    dropDownMenuR.getElement().classList.add('ddm-right');
 
     const main = document.createElement('main');
     body.appendChild(main);

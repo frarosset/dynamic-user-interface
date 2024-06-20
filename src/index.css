@@ -36,7 +36,7 @@ main {
     --color-dark: crimson;
 }
 
-.drop-down-menu:last-of-type {
+.drop-down-menu.ddm-right {
     --color-light: lightblue;
     --color-dark: navy;
 }

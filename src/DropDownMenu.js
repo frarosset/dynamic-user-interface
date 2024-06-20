@@ -39,6 +39,10 @@ export default class DropDownMenu{
         }
     }
 
+    getElement(){
+        return this.#dropDownDiv;
+    }
+
     addItem(data){
         if (data.label === null){ // separator
             const separator = initHr(`${blockName}__separator`);
