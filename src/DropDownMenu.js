@@ -2,7 +2,23 @@ import './DropDownMenu.css';
 import {initDiv, initP, initButton, initA, initLiAsChildInList, initUl, initHr} from './commonDomComponents.js';
 import {changeChildFaIcon} from './fontAwesomeUtilities.js';
 
-let blockName = 'drop-down-menu'; // ddm = drop-down-menu
+const blockName = 'drop-down-menu';
+const alignValues = ['center','left','right'];
+const cssClass = {
+    dropDownDiv: blockName,
+    button: `${blockName}__button`,
+    contentCnt: `${blockName}__content-container`,
+    content: `${blockName}__content`,
+    separator: `${blockName}__separator`,
+    item: `${blockName}__item`,
+    anchor: `${blockName}__anchor`,
+    label: `${blockName}__label`,
+    action: `${blockName}__action`,
+}
+// For contentCntAlign, use the first value in alignValues as default value in case of wrong align label argument
+cssClass.contentCntAlign = (align) => `${cssClass.contentCnt}--align--${alignValues.includes(align) ? align : alignValues[0]}`;
+cssClass.contentCntVisible = `${cssClass.contentCnt}--visible`;
+cssClass.contentCntVisibleForced = `${cssClass.contentCnt}--visible-forced`;
 
 export default class DropDownMenu{
     #dropDownDiv;
@@ -15,20 +31,18 @@ export default class DropDownMenu{
         forced: {prefix: 'solid', icon: 'xmark'}
     };
 
-    constructor(parentDiv, menuData, enableHover=false, btnFaIcon = {prefix: 'solid', icon: 'bars'}, btnLabel='', contentPosition){
-        if (contentPosition !== 'left' && contentPosition !== 'right')
-            contentPosition = 'center';
-        this.#dropDownDiv = initDiv(blockName);
-        this.#button = initButton(`${blockName}__button`, this.#buttonClickCallback, btnFaIcon, '', btnLabel);
-        this.#contentCnt = initDiv([`${blockName}__content-container`, `${blockName}__content-container--align--${contentPosition}`]);
-        this.#content = initUl(`${blockName}__content`);
+    constructor(parentDiv, menuData, enableHover=false, btnFaIcon = {prefix: 'solid', icon: 'bars'}, btnLabel='', align = 'center'){
+        this.#dropDownDiv = initDiv(cssClass.dropDownDiv);
+        this.#button = initButton(cssClass.button, this.#buttonClickCallback, btnFaIcon, '', btnLabel);
+        this.#contentCnt = initDiv([cssClass.contentCnt, cssClass.contentCntAlign(align)]);
+        this.#content = initUl(cssClass.content);
 
         menuData.forEach(data => {
             this.addItem(data);
         });
 
-        this.#dropDownDiv.appendChild(this.#button);
         this.#contentCnt.appendChild(this.#content);
+        this.#dropDownDiv.appendChild(this.#button);
         this.#dropDownDiv.appendChild(this.#contentCnt);
         parentDiv.appendChild(this.#dropDownDiv);
 
@@ -45,41 +59,38 @@ export default class DropDownMenu{
 
     addItem(data){
         if (data.label === null){ // separator
-            const separator = initHr(`${blockName}__separator`);
+            const separator = initHr(cssClass.separator);
             this.#content.appendChild(separator);
             return;
         }
 
-        let liChild;
-
+        const li = initLiAsChildInList(this.#content, cssClass.item);
         if (data.link){ // anchor
-            liChild = initA(`${blockName}__anchor`, data.link, data.faIcon, '', data.label);
+            li.appendChild(initA(cssClass.anchor, data.link, data.faIcon, '', data.label));
         } else if (data.action){ // action
-            liChild = initButton(`${blockName}__action`, data.action, data.faIcon, '', data.label);
+            li.appendChild(initButton(cssClass.action, data.action, data.faIcon, '', data.label));
         } else { // label
-            liChild = initP(`${blockName}__label`, data.faIcon, '', data.label);
+            li.appendChild(initP(cssClass.label, data.faIcon, '', data.label));
         }
-
-        const li = initLiAsChildInList(this.#content, `${blockName}__item`);
-        li.appendChild(liChild);
     }
 
     toggleVisibility(condition=undefined){
-        this.#contentCnt.classList.toggle(`${blockName}__content-container--visible`,condition);
+        this.#contentCnt.classList.toggle(cssClass.contentCntVisible,condition);
     }
 
     toggleForcedVisibility(condition=undefined){
-        const cssClass = `${blockName}__content-container--visible-forced`;
-        this.#contentCnt.classList.toggle(cssClass,condition);
-        if (this.#contentCnt.classList.contains(cssClass)){
-            if (this.#buttonFaIcons.forced)
-                changeChildFaIcon(this.#button, this.#buttonFaIcons.forced);
+        const isForced = this.#contentCnt.classList.toggle(cssClass.contentCntVisibleForced,condition);
+        this.#setForcedVisisbilityFaIcon(isForced);
+    }
+
+    #setForcedVisisbilityFaIcon(isForced){
+        if (isForced){
+            changeChildFaIcon(this.#button, this.#buttonFaIcons.forced);
         } else {
-            if (this.#buttonFaIcons.normal)
-                changeChildFaIcon(this.#button, this.#buttonFaIcons.normal);
+            changeChildFaIcon(this.#button, this.#buttonFaIcons.normal);
         }
     }
- 
+
     // Event listeners callbacks ----------------------------------------------
     // see https://alephnode.io/07-event-handler-binding/
     #buttonClickCallback = () => {
