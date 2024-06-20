@@ -36,6 +36,7 @@
     overflow: hidden;
     height: 100%; 
     background-color: var(--frame-bg-col);
+    width: 100%;
 }
 
 .image-carousel__slides{
@@ -43,6 +44,7 @@
     display: flex;
     position: relative;
     transition: transform ease-in-out var(--slide-duration);
+    width: 100%;
 }
 
 .image-carousel__slides--transition-off{
