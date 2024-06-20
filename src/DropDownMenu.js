@@ -1,6 +1,6 @@
 import './DropDownMenu.css';
 import {initDiv, initP, initButton, initA, initLi, initUl, initHr} from './commonDomComponents.js';
-import {changeFaIcon} from './fontAwesomeUtilities.js';
+import {changeChildFaIcon} from './fontAwesomeUtilities.js';
 
 let blockName = 'drop-down-menu'; // ddm = drop-down-menu
 
@@ -69,10 +69,10 @@ export default class DropDownMenu{
         this.#contentCnt.classList.toggle(cssClass,condition);
         if (this.#contentCnt.classList.contains(cssClass)){
             if (this.#buttonFaIcons.forced)
-                changeFaIcon(this.#button, this.#buttonFaIcons.forced);
+                changeChildFaIcon(this.#button, this.#buttonFaIcons.forced);
         } else {
             if (this.#buttonFaIcons.normal)
-                changeFaIcon(this.#button, this.#buttonFaIcons.normal);
+                changeChildFaIcon(this.#button, this.#buttonFaIcons.normal);
         }
     }
  

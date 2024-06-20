@@ -1,5 +1,5 @@
 import './ImageCarousel.css';
-import {changeFaIcon} from './fontAwesomeUtilities.js';
+import {changeChildFaIcon} from './fontAwesomeUtilities.js';
 import {initDiv, initImg, initButton} from './commonDomComponents.js';
 import {triggerReflow,initHorizontalSwipeDetection} from './commonDomUtilities.js';
 
@@ -142,14 +142,14 @@ export default class ImageCarousel{
         this.#setSlideTimeout(); // this sets the timeout only if this.#autoCycling is true
 
         const faIcon = this.#faIcons.pauseCyclingBtn;
-        changeFaIcon(this.#autoCyclingButton,faIcon);
+        changeChildFaIcon(this.#autoCyclingButton,faIcon);
     }
     #cancelAutoCycling(){
         this.#cancelSlideTimeout(); // this sets the timeout only if this.#autoCycling is true
         this.#autoCycling = false; // // set this after!
 
         const faIcon = this.#faIcons.playCyclingBtn;
-        changeFaIcon(this.#autoCyclingButton,faIcon);
+        changeChildFaIcon(this.#autoCyclingButton,faIcon);
     }
 
     #initSlideTimeout(slideTimeoutInMs){
@@ -233,12 +233,12 @@ export default class ImageCarousel{
     #selectCurrentSlideIcon(){
         const currentSlideDot = this.#getSlideDot(this.#currentImgIdx);
         const faIcon = this.#faIcons.currentNavigationDot; 
-        changeFaIcon(currentSlideDot,faIcon);
+        changeChildFaIcon(currentSlideDot,faIcon);
     }
     #unselectCurrentSlideIcon(){
         const currentSlideDot = this.#getSlideDot(this.#currentImgIdx);
         const faIcon = this.#faIcons.navigationDot; 
-        changeFaIcon(currentSlideDot,faIcon);
+        changeChildFaIcon(currentSlideDot,faIcon);
     }
    
     #selectCurrentSlideImg(){

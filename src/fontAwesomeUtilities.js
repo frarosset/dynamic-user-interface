@@ -4,30 +4,59 @@ import '@fortawesome/fontawesome-free/js/solid';
 import '@fortawesome/fontawesome-free/js/regular';
 import '@fortawesome/fontawesome-free/js/brands';
 
-export function getFaIconHTML(faIcon, fullWidth = true){
-    return `<i class="fa-${faIcon.prefix} fa-${faIcon.icon} ${fullWidth ? 'fa-fw' : ''}" aria-hidden="true"></i>`;
+export function initFaIcon(faIcon, fullWidth = true){
+    let i = document.createElement('i');
+    let classNames = [`fa-${faIcon.prefix}`, `fa-${faIcon.icon}`];
+    if (fullWidth){
+        classNames.push('fa-fw');
+    }
+    i.classList.add(...classNames);
+    i.setAttribute('aria-hidden','true');
+    return i;
 }
 
-export function setFaIconAndLabel(element,faIcon,label=''){
+export function setFaIcon(parentElement,faIcon){
     if (faIcon){
-        element.innerHTML = `${getFaIconHTML(faIcon)}${label}`;
+        parentElement.appendChild(initFaIcon(faIcon));
+    }
+}
+
+export function setFaIconAndLabel(parentElement,faIcon,label=''){
+    if (faIcon){
+        parentElement.appendChild(initFaIcon(faIcon));
+        parentElement.appendChild(document.createTextNode(label));
     } else {
-        element.textContent = label;
+        parentElement.textContent = label;
     }
 }
 
-export function setFaIcon(element,faIcon){
+export function setLabelAndFaIcon(parentElement,faIcon,label=''){
     if (faIcon){
-        element.innerHTML = `${getFaIconHTML(faIcon)}`;
+        parentElement.appendChild(document.createTextNode(label));
+        parentElement.appendChild(initFaIcon(faIcon));
+    } else {
+        parentElement.textContent = label;
     }
 }
 
-export function changeFaIcon(element,faIcon = {prefix: null, icon: null}){
-    const iconSVG = element.children[0];
-    if (faIcon.prefix){
-        iconSVG.setAttribute('data-prefix', `fa-${faIcon.prefix}`);
-    } 
-    if (faIcon.icon){
-        iconSVG.setAttribute('data-icon', faIcon.icon);
+export function setFaIconInBetweenText(parentElement,faIcon,textPre='',textPost=''){
+    if (faIcon){
+        parentElement.appendChild(document.createTextNode(textPre));
+        parentElement.appendChild(initFaIcon(faIcon));
+        parentElement.appendChild(document.createTextNode(textPost));
+    } else {
+        parentElement.textContent = `${textPre} ${textPost}`;
+    }
+}
+
+export function changeChildFaIcon(parentElement,faIcon = {prefix: null, icon: null}){
+    const iconSVG = parentElement.querySelector('svg');
+    if (iconSVG){ // <i> element already converted to <svg>
+        if (faIcon.prefix){
+            iconSVG.setAttribute('data-prefix', `fa-${faIcon.prefix}`);
+        } 
+        if (faIcon.icon){
+            iconSVG.setAttribute('data-icon', faIcon.icon);
+        }
     }
 }
