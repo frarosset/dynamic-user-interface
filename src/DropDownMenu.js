@@ -1,5 +1,5 @@
 import './DropDownMenu.css';
-import {initDiv, initP, initButton, initA, initLi, initUl, initHr} from './commonDomComponents.js';
+import {initDiv, initP, initButton, initA, initLiAsChildInList, initUl, initHr} from './commonDomComponents.js';
 import {changeChildFaIcon} from './fontAwesomeUtilities.js';
 
 let blockName = 'drop-down-menu'; // ddm = drop-down-menu
@@ -19,7 +19,7 @@ export default class DropDownMenu{
         if (contentPosition !== 'left' && contentPosition !== 'right')
             contentPosition = 'center';
         this.#dropDownDiv = initDiv(blockName);
-        this.#button = initButton(`${blockName}__button`, this.#buttonClickCallback, btnFaIcon, btnLabel);
+        this.#button = initButton(`${blockName}__button`, this.#buttonClickCallback, btnFaIcon, '', btnLabel);
         this.#contentCnt = initDiv([`${blockName}__content-container`, `${blockName}__content-container--align--${contentPosition}`]);
         this.#content = initUl(`${blockName}__content`);
 
@@ -49,14 +49,14 @@ export default class DropDownMenu{
         let liChild;
 
         if (data.link){ // anchor
-            liChild = initA(`${blockName}__anchor`, data.link, data.faIcon,data.label);
+            liChild = initA(`${blockName}__anchor`, data.link, data.faIcon, '', data.label);
         } else if (data.action){ // action
-            liChild = initButton(`${blockName}__action`, data.action, data.faIcon, data.label);
+            liChild = initButton(`${blockName}__action`, data.action, data.faIcon, '', data.label);
         } else { // label
-            liChild = initP(`${blockName}__label`, data.faIcon,data.label);
+            liChild = initP(`${blockName}__label`, data.faIcon, '', data.label);
         }
 
-        const li = initLi(this.#content, `${blockName}__item`);
+        const li = initLiAsChildInList(this.#content, `${blockName}__item`);
         li.appendChild(liChild);
     }
 

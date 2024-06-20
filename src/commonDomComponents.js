@@ -1,4 +1,4 @@
-import {setFaIconAndLabel} from './fontAwesomeUtilities.js';
+import {setFaIconInBetweenText} from './fontAwesomeUtilities.js';
 
 // For passing methods as callbacks, see: https://alephnode.io/07-event-handler-binding/
 
@@ -8,25 +8,25 @@ export function initDiv(className=null){
     return element;
 }
 
-export function initP(className=null, faIcon= null, label= ''){
+export function initP(className=null, faIcon= null, textPre='', textPost=''){
     const element = document.createElement('p');
     applyClass(element, className);
-    setFaIconAndLabel(element,faIcon, label);
+    setFaIconInBetweenText(element,faIcon, textPre, textPost);
     return element;
 }
 
-export function initButton(className=null, clickCallback= () => {}, faIcon= null, label= ''){
+export function initButton(className=null, clickCallback= () => {}, faIcon= null, textPre='',textPost=''){
     const element = document.createElement('button');
     applyClass(element, className);
-    setFaIconAndLabel(element,faIcon, label);
+    setFaIconInBetweenText(element,faIcon, textPre, textPost);
     element.addEventListener('click', clickCallback);
     return element;
 }
 
-export function initA(className=null, href='', faIcon= null, label= '', target='_self'){
+export function initA(className=null, href='', faIcon= null, textPre='',textPost='', target='_self'){
     const element = document.createElement('a');
     applyClass(element, className);
-    setFaIconAndLabel(element,faIcon, label);
+    setFaIconInBetweenText(element,faIcon, textPre, textPost);
     element.href = href;
     element.target = target; // '_blank' opens link in a new tab
     return element;
@@ -52,10 +52,15 @@ export function initOl(className=null){
     return element;
 }
 
-export function initLi(parentList, className=null, faIcon= null, label= ''){
+export function initLi(className=null, faIcon= null, textPre='',textPost=''){
     const element = document.createElement('li');
     applyClass(element, className);
-    setFaIconAndLabel(element,faIcon, label);
+    setFaIconInBetweenText(element,faIcon, textPre, textPost);
+    return element;
+}
+
+export function initLiAsChildInList(parentList, className, faIcon= null, textPre='',textPost=''){
+    const element = initLi(className, faIcon, textPre, textPost)
     parentList.appendChild(element);
     return element;
 }
