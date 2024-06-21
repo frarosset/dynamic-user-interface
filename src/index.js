@@ -22,7 +22,7 @@ const btnFaIcon = {prefix: 'solid', icon: 'bars'};
 // image carousel
 const imageWidth = 1600;
 const imageHeight = 900;
-const imageNum = 5; //[1,99]
+const imageNum = 25; //[1,99]
 const imagesPaths = Array(imageNum).fill().map((_,idx) => `https://lipsum.app/id/${idx}/${imageWidth}x${imageHeight}`);
 
 function init(){
