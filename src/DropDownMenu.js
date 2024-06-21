@@ -20,21 +20,28 @@ cssClass.contentCntAlign = (align) => `${cssClass.contentCnt}--align--${alignVal
 cssClass.contentCntVisible = `${cssClass.contentCnt}--visible`;
 cssClass.contentCntVisibleForced = `${cssClass.contentCnt}--visible-forced`;
 
+const defaultOptions = {
+    enableHover: true,
+    buttonFaIcon: {prefix: 'solid', icon: 'bars'},
+    buttonFaIconForced: {prefix: 'solid', icon: 'xmark'},
+    buttonLabel: '',
+    align: 'center'
+}
+
 export default class DropDownMenu{
     #dropDownDiv;
     #button;
     #content;
     #contentCnt;
 
-    #buttonFaIcons = {
-        normal: {prefix: 'solid', icon: 'bars'},
-        forced: {prefix: 'solid', icon: 'xmark'}
-    };
+    #options;
 
-    constructor(parentDiv, menuData, enableHover=false, btnFaIcon = {prefix: 'solid', icon: 'bars'}, btnLabel='', align = 'center'){
+    constructor(parentDiv, menuData,  options={}){
+        this.#options = Object.assign(defaultOptions,options); 
+        
         this.#dropDownDiv = initDiv(cssClass.dropDownDiv);
-        this.#button = initButton(cssClass.button, this.#buttonClickCallback, btnFaIcon, '', btnLabel);
-        this.#contentCnt = initDiv([cssClass.contentCnt, cssClass.contentCntAlign(align)]);
+        this.#button = initButton(cssClass.button, this.#buttonClickCallback, this.#options.buttonFaIcon, '', this.#options.buttonLabel);
+        this.#contentCnt = initDiv([cssClass.contentCnt, cssClass.contentCntAlign(this.#options.align)]);
         this.#content = initUl(cssClass.content);
 
         menuData.forEach(data => {
@@ -47,7 +54,7 @@ export default class DropDownMenu{
         parentDiv.appendChild(this.#dropDownDiv);
 
         this.#content.addEventListener('click', this.#contentClickCallback);
-        if (enableHover){
+        if (this.#options.enableHover){
             this.#button.addEventListener('pointerenter', this.#buttonPointerEnterCallback);
             this.#dropDownDiv.addEventListener('pointerleave', this.#buttonPointerLeaveCallback);
         }
@@ -85,9 +92,9 @@ export default class DropDownMenu{
 
     #setForcedVisisbilityFaIcon(isForced){
         if (isForced){
-            changeChildFaIcon(this.#button, this.#buttonFaIcons.forced);
+            changeChildFaIcon(this.#button, this.#options.buttonFaIconForced);
         } else {
-            changeChildFaIcon(this.#button, this.#buttonFaIcons.normal);
+            changeChildFaIcon(this.#button, this.#options.buttonFaIcon);
         }
     }
 

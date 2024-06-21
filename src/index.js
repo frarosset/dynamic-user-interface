@@ -2,7 +2,7 @@ import './index.css';
 import DropDownMenu from './DropDownMenu.js';
 import ImageCarousel from './ImageCarousel.js';
 
-// menu options
+// drop-down menu data
 const menuData = [
     {label: "Anchor 1", link:"#"},
     {label: "Anchor 2", link:"#", faIcon: {prefix: "regular", icon: "star"}},
@@ -16,10 +16,8 @@ const menuData = [
     {label: "Action 2", action: () => {alert('Action 2!');}, faIcon: {prefix: "regular", icon: "user"}},
     {label: "", action: () => {alert('Action 3!');}, faIcon: {prefix: "regular", icon: "face-smile"}}
 ];
-const showMenuOnHover = true;
-const btnFaIcon = {prefix: 'solid', icon: 'bars'};
 
-// image carousel
+// image carousel data
 const imageWidth = 1600;
 const imageHeight = 900;
 const imageNum = 5; //[1,99]
@@ -29,18 +27,17 @@ const imageCarouselOptions = {
     autoCycling: true,
 }
 
-
 function init(){
     const body = document.querySelector('body');
 
     const header = document.createElement('header');
     body.appendChild(header);
     
-    const dropDownMenuL = new DropDownMenu(header,menuData,showMenuOnHover,btnFaIcon,'LEFT','left');
+    const dropDownMenuL = new DropDownMenu(header,menuData,{buttonLabel: 'LEFT', align: 'left'});
     dropDownMenuL.getElement().classList.add('ddm-left');
-    const dropDownMenuC = new DropDownMenu(header,menuData,showMenuOnHover,btnFaIcon,'CENTER','center');
+    const dropDownMenuC = new DropDownMenu(header,menuData,{buttonLabel: 'CENTER', align: 'center'});
     dropDownMenuC.getElement().classList.add('ddm-center');
-    const dropDownMenuR = new DropDownMenu(header,menuData,showMenuOnHover,btnFaIcon,'RIGHT','right');
+    const dropDownMenuR = new DropDownMenu(header,menuData,{buttonLabel: 'RIGHT', align: 'right'});
     dropDownMenuR.getElement().classList.add('ddm-right');
 
     const main = document.createElement('main');
