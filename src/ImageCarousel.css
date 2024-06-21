@@ -5,6 +5,7 @@
     --img-fit: cover; /*cover / contain */
     --img-current-opacity: 100%;
     --img-current-scale: 1; /* greater or equal to 0 */
+    --img-width: 100%; /* WARNING: overwritten by js */
     --img-side-opacity: 40%;
     --img-side-scale: 0.9; /* between 0 and 1, included */
 
@@ -54,8 +55,8 @@
 
 .image-carousel__img {
     height: 100%;
-    max-width: 100%;
-    min-width: 100%;
+    max-width: var(--img-width);
+    min-width: var(--img-width);
     object-fit: var(--img-fit);
     opacity: var(--img-side-opacity);
     transform: scale(var(--img-side-scale));

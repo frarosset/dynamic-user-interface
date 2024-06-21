@@ -54,6 +54,9 @@ export default class ImageCarousel{
         pauseCyclingBtn: {prefix: 'solid', icon: 'pause'},
     };
 
+    #imgWidthPercentage;
+    #minImgWidthPercentage = 20;
+   
     constructor(parentDiv,imagesPaths,slideTimeoutInMs=5000, autoCycling=true){
         this.#imageCarouselDiv = initDiv(cssClass.imageCarouselDiv);
 
@@ -81,12 +84,26 @@ export default class ImageCarousel{
 
         if(autoCycling)
             this.#setSlideTimeout();
+
+        this.setImgWidthPercentage(70); // todo: get value from function input
     }
 
     getElement(){
         return this.#imageCarouselDiv;
     }
 
+    setImgWidthPercentage(width){
+        const getValidWidth = (width) => {
+            // To avoid unwanted animations between image 1 and N, the width percentage
+            // must be between max(100/#numOfImgs, #minImgWidthPercentage) and 100
+            const minWidth = Math.max(this.#minImgWidthPercentage, 100 / this.#numOfImgs);
+            const boundedWidth = Math.min(Math.max(width,minWidth),100);
+            return Math.round(boundedWidth);
+        }
+        this.#imgWidthPercentage = getValidWidth(width);
+        this.#imageCarouselDiv.style.setProperty('--img-width',`${this.#imgWidthPercentage}%`);
+        this.#setCurrentImgData(this.#currentImgIdx);
+    }
 
     #initFrameDivWithImages(imagesPaths){
         this.#imagesDiv = initDiv(cssClass.slides);
@@ -97,14 +114,14 @@ export default class ImageCarousel{
         // [N'],[1],[2],[3],...,[N],[1']
         // this will be used to make a seamless transition N -> 1 or 1 -> N (see below)
         this.#numOfImgs = imagesPaths.length;
-        [imagesPaths[this.#numOfImgs-1],...imagesPaths,imagesPaths[0]].forEach((imgPath,i) => {
+        let imgPerSide = Math.ceil(1 + (100 - this.#minImgWidthPercentage)/(2 * this.#minImgWidthPercentage));
+
+        let expandedImagesPathIdx = this.#getExpandedImagesPathIdx(imagesPaths,imgPerSide);
+        expandedImagesPathIdx.forEach((imgPathIdx) => {
+            const imgPath = imagesPaths[imgPathIdx];
             const img = initImg(cssClass.img, imgPath, 'A slide of the image carousel.')
             this.#imagesDiv.appendChild(img);
         });
-        this.#idxOfFirstImg = 1; // index of [1] (in this.#imagesDiv)
-        this.#idxOfLastImg = this.#numOfImgs - 1 + this.#idxOfFirstImg; // index of [N]
-        this.#idxOfAppendedFirstImg = this.#idxOfLastImg + 1; // index of [1']
-        this.#idxOfPrependedLastImg = this.#idxOfFirstImg - 1; // index of [N']
 
         const frameDiv = initDiv(cssClass.frame);
         frameDiv.appendChild(this.#imagesDiv);
@@ -125,6 +142,26 @@ export default class ImageCarousel{
         this.#setCurrentImgData(0);
         
         return frameDiv;
+    }
+
+    #getExpandedImagesPathIdx(imagesPaths,imgPerSide){
+        const expandedImagesPathIdx = [...imagesPaths.keys()];
+        
+        let iPrev = 0;
+        let iNext = this.#numOfImgs - 1;
+        for (let i=0; i<imgPerSide; i++){
+            iPrev = this.#getValidImg(iPrev-1);
+            iNext = this.#getValidImg(iNext+1);
+            expandedImagesPathIdx.unshift(iPrev);
+            expandedImagesPathIdx.push(iNext);
+        }
+
+        this.#idxOfFirstImg = imgPerSide; // index of [1] (in this.#imagesDiv)
+        this.#idxOfLastImg = this.#numOfImgs - 1 + this.#idxOfFirstImg; // index of [N]
+        this.#idxOfAppendedFirstImg = this.#idxOfLastImg + 1; // index of [1']
+        this.#idxOfPrependedLastImg = this.#idxOfFirstImg - 1; // index of [N']
+
+        return expandedImagesPathIdx;
     }
     
     #initNavigationDiv(){
@@ -215,7 +252,8 @@ export default class ImageCarousel{
         this.#unselectCurrentSlideImg();
         this.#idxForLeft =  idxForLeft; 
         //this.#imagesDiv.style.left = `-${idxForLeft*100}%`;
-        this.#imagesDiv.style.transform = `translateX(-${idxForLeft*100}%)`;
+        const w = this.#imgWidthPercentage;
+        this.#imagesDiv.style.transform = `translateX(${-(idxForLeft*w-(100-w)/2)}%)`;
         this.#selectCurrentSlideImg();
     }
 
