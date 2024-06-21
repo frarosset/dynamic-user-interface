@@ -83,6 +83,11 @@ export default class ImageCarousel{
             this.#setSlideTimeout();
     }
 
+    getElement(){
+        return this.#imageCarouselDiv;
+    }
+
+
     #initFrameDivWithImages(imagesPaths){
         this.#imagesDiv = initDiv(cssClass.slides);
 
