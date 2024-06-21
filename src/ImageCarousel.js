@@ -16,6 +16,7 @@ const cssClass = {
     slideDotButton: `${blockName}__img-button`,
 }
 cssClass.slidesTransitionOff = `${cssClass.slides}--transition-off`;
+cssClass.slidesTransitionOffWithDelay = `${cssClass.slidesTransitionOff}-with-delay`;
 cssClass.imgCurrent = `${cssClass.img}--current`;
 cssClass.slideDotButtonCurrent = `${cssClass.slideDotButton}--current`;
 
@@ -323,8 +324,10 @@ export default class ImageCarousel{
         }
     }
 
-    #suspendTransitionToCall(callback){
-        this.#imagesDiv.classList.add(cssClass.slidesTransitionOff);
+    #suspendTransitionToCall(callback,setDelay=false){
+        const tempClass = setDelay ? cssClass.slidesTransitionOffWithDelay : cssClass.slidesTransitionOff;
+
+        this.#imagesDiv.classList.add(tempClass);
         // trigger a reflow to be sure the above class is applied
         triggerReflow(this.#imagesDiv); 
         
@@ -332,7 +335,7 @@ export default class ImageCarousel{
         // trigger a reflow to be sure any operation on this.#imagesDiv is applied    
         triggerReflow(this.#imagesDiv); 
         
-        this.#imagesDiv.classList.remove(cssClass.slidesTransitionOff);
+        this.#imagesDiv.classList.remove(tempClass);
     }
 
     // Event listeners callbacks ----------------------------------------------
@@ -347,7 +350,7 @@ export default class ImageCarousel{
         this.#suspendTransitionToCall(() => {
             this.#showSlide(e.currentTarget.i); // currentTarget: element that the event listener is attached to
             this.#inTransition=false;
-        });
+        }, true); // set delay in instantaneous transition
     };
     #autoCyclingButtonClickCallback = () => {
         this.#toggleAutoCycling();

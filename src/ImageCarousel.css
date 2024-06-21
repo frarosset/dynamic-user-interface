@@ -1,6 +1,7 @@
 .image-carousel {
     --frame-bg-col: white;
     --slide-duration: 1s;
+    --jump-to-duration: 0.5s;
 
     --img-fit: cover; /*cover / contain */
     --img-current-opacity: 100%;
@@ -51,6 +52,21 @@
 
 .image-carousel__slides--transition-off {
     transition: none !important;
+}
+ 
+.image-carousel__slides--transition-off-with-delay{
+    --jump-to-duration-half: calc(var(--jump-to-duration) / 2);
+    transition: transform ease-in-out 0s var(--jump-to-duration-half) !important;
+}
+
+.image-carousel__slides--transition-off-with-delay .image-carousel__img{
+    transition-timing-function: ease-in;
+    transition-duration: var(--jump-to-duration-half);
+}
+
+.image-carousel__slides--transition-off-with-delay .image-carousel__img--current{
+    transition-timing-function: ease-out;
+    transition-delay: var(--jump-to-duration-half);
 }
 
 .image-carousel__img {
