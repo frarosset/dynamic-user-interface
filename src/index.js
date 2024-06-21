@@ -24,6 +24,11 @@ const imageWidth = 1600;
 const imageHeight = 900;
 const imageNum = 5; //[1,99]
 const imagesPaths = Array(imageNum).fill().map((_,idx) => `https://lipsum.app/id/${idx}/${imageWidth}x${imageHeight}`);
+const imageCarouselOptions = {
+    imgWidthPercentage: 50,
+    autoCycling: true,
+}
+
 
 function init(){
     const body = document.querySelector('body');
@@ -41,7 +46,7 @@ function init(){
     const main = document.createElement('main');
     body.appendChild(main);
 
-    const imageCarousel = new ImageCarousel(main,imagesPaths);
+    const imageCarousel = new ImageCarousel(main,imagesPaths,imageCarouselOptions);
     imageCarousel.getElement().classList.add('my-image-carousel');
 }
 

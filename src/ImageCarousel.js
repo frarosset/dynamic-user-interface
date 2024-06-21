@@ -3,9 +3,6 @@ import {changeChildFaIcon} from './fontAwesomeUtilities.js';
 import {initDiv, initImg, initButton} from './commonDomComponents.js';
 import {triggerReflow,initHorizontalSwipeDetection} from './commonDomUtilities.js';
 
-
-
-
 const blockName = 'image-carousel';
 const cssClass = {
     imageCarouselDiv: blockName,
@@ -22,7 +19,12 @@ cssClass.slidesTransitionOff = `${cssClass.slides}--transition-off`;
 cssClass.imgCurrent = `${cssClass.img}--current`;
 cssClass.slideDotButtonCurrent = `${cssClass.slideDotButton}--current`;
 
-
+const defaultOptions = {
+    slideTimeoutInMs: 5000,
+    autoCycling: true,
+    imgWidthPercentage: 100,
+    minImgWidthPercentage: 20,
+}
 
 export default class ImageCarousel{
     #imageCarouselDiv;
@@ -40,9 +42,7 @@ export default class ImageCarousel{
     #idxForLeft=0; // #idxOfFirstImg, ..., #idxOfLastImg, #idxOfAppendedFirstImg - the index of the shown image in #imagesDiv
 
     #slideTimeoutObj = null;
-    #slideTimeoutInMs;
 
-    #autoCycling;
     #inTransition;
 
     #faIcons = {
@@ -54,10 +54,11 @@ export default class ImageCarousel{
         pauseCyclingBtn: {prefix: 'solid', icon: 'pause'},
     };
 
-    #imgWidthPercentage;
-    #minImgWidthPercentage = 20;
+    #options;
    
-    constructor(parentDiv,imagesPaths,slideTimeoutInMs=5000, autoCycling=true){
+    constructor(parentDiv,imagesPaths,options = {}){
+        this.#options = Object.assign(defaultOptions,options); 
+
         this.#imageCarouselDiv = initDiv(cssClass.imageCarouselDiv);
 
         // add frame div with images
@@ -74,18 +75,19 @@ export default class ImageCarousel{
         this.#imageCarouselDiv.appendChild(this.#navigationDiv);
 
         // add stop/resume auto cycling of slide transition
-        this.#autoCyclingButton = this.#initStopResumeAutoCyclingButton(autoCycling);
+        this.#autoCyclingButton = this.#initStopResumeAutoCyclingButton();
         this.#imageCarouselDiv.appendChild(this.#autoCyclingButton);
 
         parentDiv.appendChild(this.#imageCarouselDiv);
 
         // initalize timeout to advance slides automatically
-        this.#initSlideTimeout(slideTimeoutInMs);
+        this.#initSlideTimeout();
 
-        if(autoCycling)
+        if(this.#options.autoCycling)
             this.#setSlideTimeout();
 
-        this.setImgWidthPercentage(70); // todo: get value from function input
+        // Initialize other style properties
+        this.setImgWidthPercentage(this.#options.imgWidthPercentage);
     }
 
     getElement(){
@@ -95,13 +97,13 @@ export default class ImageCarousel{
     setImgWidthPercentage(width){
         const getValidWidth = (width) => {
             // To avoid unwanted animations between image 1 and N, the width percentage
-            // must be between max(100/#numOfImgs, #minImgWidthPercentage) and 100
-            const minWidth = Math.max(this.#minImgWidthPercentage, 100 / this.#numOfImgs);
+            // must be between max(100/#numOfImgs, this.#options.minImgWidthPercentage) and 100
+            const minWidth = Math.max(this.#options.minImgWidthPercentage, 100 / this.#numOfImgs);
             const boundedWidth = Math.min(Math.max(width,minWidth),100);
             return Math.round(boundedWidth);
         }
-        this.#imgWidthPercentage = getValidWidth(width);
-        this.#imageCarouselDiv.style.setProperty('--img-width',`${this.#imgWidthPercentage}%`);
+        this.#options.imgWidthPercentage = getValidWidth(width);
+        this.#imageCarouselDiv.style.setProperty('--img-width',`${this.#options.imgWidthPercentage}%`);
         this.#setCurrentImgData(this.#currentImgIdx);
     }
 
@@ -114,7 +116,9 @@ export default class ImageCarousel{
         // [N'],[1],[2],[3],...,[N],[1']
         // this will be used to make a seamless transition N -> 1 or 1 -> N (see below)
         this.#numOfImgs = imagesPaths.length;
-        let imgPerSide = Math.ceil(1 + (100 - this.#minImgWidthPercentage)/(2 * this.#minImgWidthPercentage));
+        // in general, the number of images to append / prepend depends on the percentage width of the slides
+        const width = this.#options.minImgWidthPercentage;
+        let imgPerSide = Math.ceil(1 + (100 - width)/(2 * width));
 
         let expandedImagesPathIdx = this.#getExpandedImagesPathIdx(imagesPaths,imgPerSide);
         expandedImagesPathIdx.forEach((imgPathIdx) => {
@@ -146,7 +150,7 @@ export default class ImageCarousel{
 
     #getExpandedImagesPathIdx(imagesPaths,imgPerSide){
         const expandedImagesPathIdx = [...imagesPaths.keys()];
-        
+
         let iPrev = 0;
         let iNext = this.#numOfImgs - 1;
         for (let i=0; i<imgPerSide; i++){
@@ -180,44 +184,39 @@ export default class ImageCarousel{
         return navigationDiv;
     }
 
-    #initStopResumeAutoCyclingButton(autoCycling){
+    #initStopResumeAutoCyclingButton(){
         const getFaIcon = () => {
-            return autoCycling ? this.#faIcons.pauseCyclingBtn : this.#faIcons.playCyclingBtn; 
+            return this.#options.autoCycling ? this.#faIcons.pauseCyclingBtn : this.#faIcons.playCyclingBtn; 
         };
 
         const autoCyclingButton = initButton(cssClass.autoCyclingButton, this.#autoCyclingButtonClickCallback, getFaIcon());
-
-        // auto cycling disabled by default
-        this.#autoCycling = autoCycling;
 
         return autoCyclingButton;
     }
 
     #toggleAutoCycling(){
-        if (this.#autoCycling){
+        if (this.#options.autoCycling){
             this.#cancelAutoCycling();
         } else {
             this.#setAutoCycling();
         }
     }
     #setAutoCycling(){
-        this.#autoCycling = true; // set this first!
-        this.#setSlideTimeout(); // this sets the timeout only if this.#autoCycling is true
+        this.#options.autoCycling = true; // set this first!
+        this.#setSlideTimeout(); // this sets the timeout only if this.#options.autoCycling is true
 
         const faIcon = this.#faIcons.pauseCyclingBtn;
         changeChildFaIcon(this.#autoCyclingButton,faIcon);
     }
     #cancelAutoCycling(){
-        this.#cancelSlideTimeout(); // this sets the timeout only if this.#autoCycling is true
-        this.#autoCycling = false; // // set this after!
+        this.#cancelSlideTimeout(); // this sets the timeout only if this.#options.autoCycling is true
+        this.#options.autoCycling = false; // // set this after!
 
         const faIcon = this.#faIcons.playCyclingBtn;
         changeChildFaIcon(this.#autoCyclingButton,faIcon);
     }
 
-    #initSlideTimeout(slideTimeoutInMs){
-        this.#slideTimeoutInMs = slideTimeoutInMs;
-
+    #initSlideTimeout(){
         // Suspend cycling animation of image sarousel when page visibility is hidden
         // - it saves resources when the page is not visible.
         // - it solves a bug where the navigation dots were not properly updated when the page 
@@ -226,13 +225,13 @@ export default class ImageCarousel{
     }
 
     #setSlideTimeout(){
-        if (this.#autoCycling){
+        if (this.#options.autoCycling){
             // simulate a #nextButton click
-            this.#slideTimeoutObj = setTimeout(this.#nextButtonClickCallback, this.#slideTimeoutInMs);
+            this.#slideTimeoutObj = setTimeout(this.#nextButtonClickCallback, this.#options.slideTimeoutInMs);
         }
     }
     #cancelSlideTimeout(){
-        if (this.#autoCycling){
+        if (this.#options.autoCycling){
             clearTimeout(this.#slideTimeoutObj);
         }
     }
@@ -252,7 +251,7 @@ export default class ImageCarousel{
         this.#unselectCurrentSlideImg();
         this.#idxForLeft =  idxForLeft; 
         //this.#imagesDiv.style.left = `-${idxForLeft*100}%`;
-        const w = this.#imgWidthPercentage;
+        const w = this.#options.imgWidthPercentage;
         this.#imagesDiv.style.transform = `translateX(${-(idxForLeft*w-(100-w)/2)}%)`;
         this.#selectCurrentSlideImg();
     }
@@ -354,7 +353,7 @@ export default class ImageCarousel{
         this.#toggleAutoCycling();
     };
     #documentVisibilitychangeCallback = () => {
-        if (this.#autoCycling){
+        if (this.#options.autoCycling){
             if (document.visibilityState === "visible") {
                 this.#setSlideTimeout();
             } else { //document.visibilityState` === "hidden"
