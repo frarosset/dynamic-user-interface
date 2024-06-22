@@ -1,6 +1,7 @@
 import './index.css';
 import DropDownMenu from './DropDownMenu.js';
 import ImageCarousel from './ImageCarousel.js';
+import setCreditFooter from './creditFooter.js';
 
 // drop-down menu data
 const menuData = [
@@ -45,6 +46,8 @@ function init(){
 
     const imageCarousel = new ImageCarousel(main,imagesPaths,imageCarouselOptions);
     imageCarousel.getElement().classList.add('my-image-carousel');
+
+    setCreditFooter();
 }
 
 init();

@@ -21,28 +21,28 @@ export function setFaIcon(parentElement,faIcon){
     }
 }
 
-export function setFaIconAndLabel(parentElement,faIcon,label=''){
+export function setFaIconAndLabel(parentElement,faIcon,label='', fullWidth = true){
     if (faIcon){
-        parentElement.appendChild(initFaIcon(faIcon));
+        parentElement.appendChild(initFaIcon(faIcon, fullWidth));
         parentElement.appendChild(document.createTextNode(label));
     } else {
         parentElement.textContent = label;
     }
 }
 
-export function setLabelAndFaIcon(parentElement,faIcon,label=''){
+export function setLabelAndFaIcon(parentElement,faIcon,label='', fullWidth = true){
     if (faIcon){
         parentElement.appendChild(document.createTextNode(label));
-        parentElement.appendChild(initFaIcon(faIcon));
+        parentElement.appendChild(initFaIcon(faIcon, fullWidth));
     } else {
         parentElement.textContent = label;
     }
 }
 
-export function setFaIconInBetweenText(parentElement,faIcon,textPre='',textPost=''){
+export function setFaIconInBetweenText(parentElement,faIcon,textPre='',textPost='', fullWidth = true){
     if (faIcon){
         parentElement.appendChild(document.createTextNode(textPre));
-        parentElement.appendChild(initFaIcon(faIcon));
+        parentElement.appendChild(initFaIcon(faIcon, fullWidth));
         parentElement.appendChild(document.createTextNode(textPost));
     } else {
         parentElement.textContent = `${textPre} ${textPost}`;
