@@ -1,88 +1,90 @@
 .image-carousel {
-    --frame-bg-col: white;
-    --slide-duration: 1s;
-    --jump-to-duration: 0.5s;
+  --frame-bg-col: white;
+  --slide-duration: 1s;
+  --jump-to-duration: 0.5s;
 
-    --img-fit: cover; /*cover / contain */
-    --img-current-opacity: 100%;
-    --img-current-scale: 1; /* greater or equal to 0 */
-    --img-width: 100%; /* WARNING: overwritten by js */
-    --img-side-opacity: 40%;
-    --img-side-scale: 0.9; /* between 0 and 1, included */
+  --img-fit: cover; /*cover / contain */
+  --img-current-opacity: 100%;
+  --img-current-scale: 1; /* greater or equal to 0 */
+  --img-width: 100%; /* WARNING: overwritten by js */
+  --img-side-opacity: 40%;
+  --img-side-scale: 0.9; /* between 0 and 1, included */
 
-    --button-color: rgb(255, 255, 255, 70%);
-    --button-current-color: rgb(255, 255, 255, 90%);
-    --button-icon-padding: 8px;
-    --button-margin: 3vmin;
-    --button-shadow: 0px 0px 5px black;
+  --button-color: rgb(255, 255, 255, 70%);
+  --button-current-color: rgb(255, 255, 255, 90%);
+  --button-icon-padding: 8px;
+  --button-margin: 3vmin;
+  --button-shadow: 0px 0px 5px black;
 
-    --prev-next-button-icon-size: 40px;
-    --prev-next-button-width: 15%;
-    --navigation-max-width: 90%;
-    --img-button-icon-size: 8px;
-    --auto-cycling-button-icon-size: 20px;
+  --prev-next-button-icon-size: 40px;
+  --prev-next-button-width: 15%;
+  --navigation-max-width: 90%;
+  --img-button-icon-size: 8px;
+  --auto-cycling-button-icon-size: 20px;
 
-    height: 100%;
-    position: relative;
-    width: 100%;
-    overflow: hidden;
+  height: 100%;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
 }
 
 .image-carousel,
 .image-carousel * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 .image-carousel__frame {
-    background-color: var(--frame-bg-col);
-    height: 100%;
-    width: 100%;
+  background-color: var(--frame-bg-col);
+  height: 100%;
+  width: 100%;
 }
 
 .image-carousel__slides {
-    display: flex;
-    height: 100%;
-    position: relative;
-    /* transform: set via js, to show the current slide on the frame */
-    transition: transform ease-in-out var(--slide-duration);
-    width: 100%;
+  display: flex;
+  height: 100%;
+  position: relative;
+  /* transform: set via js, to show the current slide on the frame */
+  transition: transform ease-in-out var(--slide-duration);
+  width: 100%;
 }
 
 .image-carousel__slides--transition-off {
-    transition: none !important;
-}
- 
-.image-carousel__slides--transition-off-with-delay{
-    --jump-to-duration-half: calc(var(--jump-to-duration) / 2);
-    transition: transform ease-in-out 0s var(--jump-to-duration-half) !important;
+  transition: none !important;
 }
 
-.image-carousel__slides--transition-off-with-delay .image-carousel__img{
-    transition-timing-function: ease-in;
-    transition-duration: var(--jump-to-duration-half);
+.image-carousel__slides--transition-off-with-delay {
+  --jump-to-duration-half: calc(var(--jump-to-duration) / 2);
+  transition: transform ease-in-out 0s var(--jump-to-duration-half) !important;
 }
 
-.image-carousel__slides--transition-off-with-delay .image-carousel__img--current{
-    transition-timing-function: ease-out;
-    transition-delay: var(--jump-to-duration-half);
+.image-carousel__slides--transition-off-with-delay .image-carousel__img {
+  transition-timing-function: ease-in;
+  transition-duration: var(--jump-to-duration-half);
+}
+
+.image-carousel__slides--transition-off-with-delay
+  .image-carousel__img--current {
+  transition-timing-function: ease-out;
+  transition-delay: var(--jump-to-duration-half);
 }
 
 .image-carousel__img {
-    height: 100%;
-    max-width: var(--img-width);
-    min-width: var(--img-width);
-    object-fit: var(--img-fit);
-    opacity: var(--img-side-opacity);
-    transform: scale(var(--img-side-scale));
-    transition: opacity ease-in-out var(--slide-duration),
-        transform ease-in-out var(--slide-duration);
+  height: 100%;
+  max-width: var(--img-width);
+  min-width: var(--img-width);
+  object-fit: var(--img-fit);
+  opacity: var(--img-side-opacity);
+  transform: scale(var(--img-side-scale));
+  transition:
+    opacity ease-in-out var(--slide-duration),
+    transform ease-in-out var(--slide-duration);
 }
 
 .image-carousel__img--current {
-    opacity: var(--img-current-opacity);
-    transform: scale(var(--img-current-scale));
+  opacity: var(--img-current-opacity);
+  transform: scale(var(--img-current-scale));
 }
 
 /* User Interface */
@@ -91,64 +93,67 @@
 .image-carousel__next-button,
 .image-carousel__navigation,
 .image-carousel__auto-cycling-button {
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    position: absolute;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  position: absolute;
 }
 
 .image-carousel__previous-button,
 .image-carousel__next-button,
 .image-carousel__img-button,
 .image-carousel__auto-cycling-button {
-    background-color: transparent;
-    border: none;
-    color: var(--button-color);
-    filter: drop-shadow(var(--button-shadow));
-    padding: var(--button-icon-padding);
+  background-color: transparent;
+  border: none;
+  color: var(--button-color);
+  filter: drop-shadow(var(--button-shadow));
+  padding: var(--button-icon-padding);
 }
 
 .image-carousel__previous-button,
 .image-carousel__next-button {
-    font-size: var(--prev-next-button-icon-size);
-    height: 100%;
-    /* The minimum width is limited by the icon, regardless of var(--prev-next-button-width) */
-    min-width: calc(var(--prev-next-button-icon-size) + 2 * var(--button-margin));
-    top: 50%;
-    transform: translateY(-50%);
-    width: var(--prev-next-button-width);
+  font-size: var(--prev-next-button-icon-size);
+  height: 100%;
+  /* The minimum width is limited by the icon, regardless of var(--prev-next-button-width) */
+  min-width: calc(var(--prev-next-button-icon-size) + 2 * var(--button-margin));
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--prev-next-button-width);
 }
 
 .image-carousel__previous-button {
-    left: 0%;
+  left: 0%;
 }
 
 .image-carousel__next-button {
-    right: 0%;
+  right: 0%;
 }
 
 .image-carousel__navigation {
-    bottom: var(--button-margin);
-    flex-wrap: wrap;
-    left: 50%;
-    /* Maximum width is also limited by the button margin (on left and right side) */
-    max-width: min(var(--navigation-max-width), calc(100% - 2 * var(--button-margin)));
-    transform: translateX(-50%);
-    width: max-content;
-    z-index: 1;
+  bottom: var(--button-margin);
+  flex-wrap: wrap;
+  left: 50%;
+  /* Maximum width is also limited by the button margin (on left and right side) */
+  max-width: min(
+    var(--navigation-max-width),
+    calc(100% - 2 * var(--button-margin))
+  );
+  transform: translateX(-50%);
+  width: max-content;
+  z-index: 1;
 }
 
 .image-carousel__img-button {
-    font-size: var(--img-button-icon-size);
+  font-size: var(--img-button-icon-size);
 }
 
 .image-carousel__img-button--current {
-    color: var(--button-current-color);
+  color: var(--button-current-color);
 }
 
 .image-carousel__auto-cycling-button {
-    font-size: var(--auto-cycling-button-icon-size);
-    right: var(--button-margin);
-    top: var(--button-margin);
-    z-index: 1;
+  font-size: var(--auto-cycling-button-icon-size);
+  right: var(--button-margin);
+  top: var(--button-margin);
+  z-index: 1;
 }
