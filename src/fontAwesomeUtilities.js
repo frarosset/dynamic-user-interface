@@ -5,8 +5,8 @@ import "@fortawesome/fontawesome-free/js/regular";
 import "@fortawesome/fontawesome-free/js/brands";
 
 export function initFaIcon(faIcon, fullWidth = true) {
-  let i = document.createElement("i");
-  let classNames = [`fa-${faIcon.prefix}`, `fa-${faIcon.icon}`];
+  const i = document.createElement("i");
+  const classNames = [`fa-${faIcon.prefix}`, `fa-${faIcon.icon}`];
   if (fullWidth) {
     classNames.push("fa-fw");
   }

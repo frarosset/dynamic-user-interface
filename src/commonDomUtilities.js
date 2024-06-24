@@ -18,9 +18,9 @@ export function initHorizontalSwipeDetection(
   });
 
   element.addEventListener("touchend", (e) => {
-    let xTouchEnd = e.changedTouches[0].screenX;
+    const xTouchEnd = e.changedTouches[0].screenX;
     const sensitivityInPixel = 10;
-    let delta = xTouchEnd - xTouchStart;
+    const delta = xTouchEnd - xTouchStart;
 
     if (delta > sensitivityInPixel) {
       callbackRight();

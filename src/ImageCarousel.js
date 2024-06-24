@@ -137,9 +137,9 @@ export default class ImageCarousel {
     this.#numOfImgs = imagesPaths.length;
     // in general, the number of images to append / prepend depends on the percentage width of the slides
     const width = this.#options.minImgWidthPercentage;
-    let imgPerSide = Math.ceil(1 + (100 - width) / (2 * width));
+    const imgPerSide = Math.ceil(1 + (100 - width) / (2 * width));
 
-    let expandedImagesPathIdx = this.#getExpandedImagesPathIdx(
+    const expandedImagesPathIdx = this.#getExpandedImagesPathIdx(
       imagesPaths,
       imgPerSide
     );
@@ -288,7 +288,7 @@ export default class ImageCarousel {
   }
 
   #getValidImg(imgIdx) {
-    let mod = (x, n) => ((x % n) + n) % n;
+    const mod = (x, n) => ((x % n) + n) % n;
     return mod(imgIdx, this.#numOfImgs);
   }
 
@@ -308,7 +308,7 @@ export default class ImageCarousel {
   }
 
   #getIdxForLeft(imgIdx) {
-    let idx = imgIdx + this.#idxOfFirstImg;
+    const idx = imgIdx + this.#idxOfFirstImg;
     if (
       idx === this.#idxOfAppendedFirstImg ||
       idx === this.#idxOfPrependedLastImg

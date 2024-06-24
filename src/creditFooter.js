@@ -46,7 +46,7 @@ export default function setCreditFooter(data) {
     `https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Hw5aXo.woff2`;
   fonts["Bad Script"] =
     "https://fonts.gstatic.com/s/badscript/v16/6NUT8F6PJgbFWQn47_x7pOskzA.woff2";
-  for (let font in fonts) {
+  for (const font in fonts) {
     addFont(font, fonts[font]);
   }
 
