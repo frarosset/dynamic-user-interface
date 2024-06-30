@@ -1,4 +1,5 @@
 import { setLabelAndFaIcon } from "./fontAwesomeUtilities.js";
+import WebFont from "webfontloader";
 
 const defaultData = {
   name: "F. Rosset",
@@ -8,12 +9,12 @@ const defaultData = {
 export default function setCreditFooter(data) {
   data = Object.assign(defaultData, data);
 
-  let footer = document.querySelector("footer");
-
-  if (!footer) {
-    footer = document.createElement("footer");
-    document.body.appendChild(footer);
-  }
+  //let footer = document.querySelector("footer");
+  //if (!footer) {
+  const footer = document.createElement("footer");
+  footer.classList.add("credit-footer");
+  document.body.appendChild(footer);
+  //}
 
   const a = document.createElement("a");
   a.href = `https://github.com/${data.githubName}`;
@@ -34,24 +35,23 @@ export default function setCreditFooter(data) {
 
   // Apply styling
 
-  // Fonts loading: see https://stackoverflow.com/questions/5586845/how-to-import-font-file-using-javascript
-  const addFont = (name, url) => {
-    const font_name = new FontFace(name, `url('${url}')`);
-    document.fonts.add(font_name);
-  };
   const aFont = "Bad Script";
   const pFont = "Montserrat";
-  const fonts = {};
-  fonts["Montserrat"] =
-    `https://fonts.gstatic.com/s/montserrat/v26/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Hw5aXo.woff2`;
-  fonts["Bad Script"] =
-    "https://fonts.gstatic.com/s/badscript/v16/6NUT8F6PJgbFWQn47_x7pOskzA.woff2";
-  for (const font in fonts) {
-    addFont(font, fonts[font]);
-  }
+
+  // Load the fonts
+  // see https://github.com/typekit/webfontloader
+  // you need to load the WebFont library in the <head>:
+  // <script src="https://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js" async ></script>
+  // or install and import webfontloader
+  // (npm install webfontloader)
+  WebFont.load({
+    google: {
+      families: [aFont, pFont],
+    },
+  });
 
   const color = "rgb(0, 0, 0)";
-  const bgColor = "rgb(210, 210, 210, 50%)";
+  const bgColor = "rgb(210, 210, 210, 80%)";
   const fontSize = "16px";
   const iconSize = "21px";
   const padding = "5px";
@@ -59,14 +59,14 @@ export default function setCreditFooter(data) {
 
   a.style.color = color;
   a.style.fontFamily = `"${aFont}", monospace`;
-  p.style.fontSize = fontSize;
+  a.style.fontSize = fontSize;
   a.style.fontWeight = "800";
   a.style.lineHeight = "inherit";
   a.style.textDecoration = "none";
   a.style.verticalAlign = "middle";
 
   a.children[0].style.fontSize = iconSize; // set FaIcon size
-  a.children[0].style.lineHeight = "inherit";
+  a.children[0].style.lineHeight = 1;
   a.children[0].style.verticalAlign = "top";
 
   p.style.color = color;
