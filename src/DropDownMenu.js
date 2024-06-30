@@ -123,6 +123,11 @@ export default class DropDownMenu {
       condition
     );
     this.#setForcedVisisbilityFaIcon(isForced);
+    if (isForced) {
+      document.addEventListener("click", this.#hideOnClickOutCallback);
+    } else {
+      document.removeEventListener("click", this.hideOnClickOutCallback);
+    }
   }
 
   #setForcedVisisbilityFaIcon(isForced) {
@@ -135,6 +140,17 @@ export default class DropDownMenu {
 
   // Event listeners callbacks ----------------------------------------------
   // see https://alephnode.io/07-event-handler-binding/
+  #hideOnClickOutCallback = (e) => {
+    const button = this.#button;
+    const contentCnt = this.#contentCnt;
+    if (
+      e.target !== contentCnt &&
+      e.target !== button &&
+      contentCnt.classList.contains(cssClass.contentCntVisibleForced)
+    ) {
+      this.toggleForcedVisibility(false);
+    }
+  };
   #buttonClickCallback = () => {
     this.toggleForcedVisibility();
   };
