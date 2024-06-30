@@ -112,13 +112,15 @@
 
 .image-carousel__previous-button,
 .image-carousel__next-button {
+  --lateral-free-space: calc((100% - var(--img-width)) / 2);
   font-size: var(--prev-next-button-icon-size);
   height: 100%;
   /* The minimum width is limited by the icon, regardless of var(--prev-next-button-width) */
   min-width: calc(var(--prev-next-button-icon-size) + 2 * var(--button-margin));
   top: 50%;
   transform: translateY(-50%);
-  width: var(--prev-next-button-width);
+  /* The button width is expanded tp fill the space not occupied space, regardless of var(--prev-next-button-width) */
+  width: max(var(--prev-next-button-width), var(--lateral-free-space));
 }
 
 .image-carousel__previous-button {
