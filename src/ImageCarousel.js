@@ -61,7 +61,7 @@ export default class ImageCarousel {
   #options;
 
   constructor(parentDiv, imagesPaths, options = {}) {
-    this.#options = Object.assign(defaultOptions, options);
+    this.#options = Object.assign({},defaultOptions, options);
 
     this.#imageCarouselDiv = initDiv(cssClass.imageCarouselDiv);
 

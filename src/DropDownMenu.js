@@ -46,7 +46,7 @@ export default class DropDownMenu {
   #options;
 
   constructor(parentDiv, menuData, options = {}) {
-    this.#options = Object.assign(defaultOptions, options);
+    this.#options = Object.assign({},defaultOptions, options);
 
     this.#dropDownDiv = initDiv(cssClass.dropDownDiv);
     this.#button = initButton(
@@ -121,7 +121,7 @@ export default class DropDownMenu {
     const isForced = this.#contentCnt.classList.toggle(
       cssClass.contentCntVisibleForced,
       condition
-    );
+      );
     this.#setForcedVisisbilityFaIcon(isForced);
     if (isForced) {
       document.addEventListener("click", this.#hideOnClickOutCallback);
